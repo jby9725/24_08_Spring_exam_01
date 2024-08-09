@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.demo.service.ArticleService;
 import com.example.demo.vo.Article;
 
 @Controller
@@ -35,7 +36,7 @@ public class UsrArticleController {
 	@ResponseBody
 	public List<Article> getArticles() {
 
-		return articleService.articles;
+		return articleService.getArticles();
 	} // /usr/article/getArticles
 
 	
@@ -62,7 +63,6 @@ public class UsrArticleController {
 			return id + "번 글이 없어 삭제되지 않았습니다.";
 		}
 
-//		articles.remove(article);
 		articleService.deleteArticle(id);
 
 		return id + "번 글이 삭제되었습니다.";
@@ -79,8 +79,6 @@ public class UsrArticleController {
 			return id + "번 글을 찾을 수 없어 수정되지 않았습니다.";
 		}
 
-//		article.setTitle(title);
-//		article.setBody(body);
 		articleService.modifyArticle(id, title, body);
 		
 		return id + "번 글이 수정되었습니다.\n" + article;

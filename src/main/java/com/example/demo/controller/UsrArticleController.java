@@ -67,33 +67,31 @@ public class UsrArticleController {
 	@ResponseBody
 	public String doDelete(int id) {
 
-		Iterator<Article> iterator = articles.iterator();
-		while (iterator.hasNext()) {
-			Article article = iterator.next();
-			if (article.getId() == id) {
-				iterator.remove(); // 안전하게 요소 제거
-				return id + "번 글이 삭제되었습니다.";
-			}
+		Article article = getArticleById(id);
+
+		if (article == null) {
+			return id + "번 글이 없어 삭제되지 않았습니다.";
 		}
 
-		return id + "번 글이 없어 삭제되지 않았습니다.";
+		articles.remove(article);
+
+		return id + "번 글이 삭제되었습니다.";
+
 	} // /usr/article/doDelete?id=1
 
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
 	public Object doModify(int id, String title, String body) {
 
-		Iterator<Article> iterator = articles.iterator();
-		while (iterator.hasNext()) {
-			Article article = iterator.next();
-			if (article.getId() == id) {
-				// Article의 속성을 수정
-				article.setTitle(title);
-				article.setBody(body);
-				return id + "번 글이 수정되었습니다." + article;
-			}
+		Article article = getArticleById(id);
+
+		if (article == null) {
+			return id + "번 글을 찾을 수 없어 수정되지 않았습니다.";
 		}
 
-		return id + "번 글을 찾을 수 없어 수정되지 않았습니다.";
+		article.setTitle(title);
+		article.setBody(body);
+		return id + "번 글이 수정되었습니다.\n" + article;
+
 	} // /usr/article/doModify?id=1&title=새_제목&body=새_내용
 }

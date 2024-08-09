@@ -63,6 +63,19 @@ public class UsrArticleController {
 		return articles;
 	} // /usr/article/getArticles
 
+	@RequestMapping("/usr/article/getArticle")
+	@ResponseBody
+	public Object getArticle(int id) {
+
+		Article article = getArticleById(id);
+
+		if (article == null) {
+			return id + "번 글이 없습니다.";
+		}
+
+		return id + "번 글 : " + article;
+	} // /usr/article/getArticle
+	
 	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
 	public String doDelete(int id) {
@@ -91,6 +104,7 @@ public class UsrArticleController {
 
 		article.setTitle(title);
 		article.setBody(body);
+		
 		return id + "번 글이 수정되었습니다.\n" + article;
 
 	} // /usr/article/doModify?id=1&title=새_제목&body=새_내용

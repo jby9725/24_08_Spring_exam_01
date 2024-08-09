@@ -38,8 +38,9 @@ public class ArticleService {
 		return articleRepository.getArticleById(id);
 	}
 
-	public Article writeArticle(String title, String body) {
-		return articleRepository.writeArticle(title, body);
+	public int writeArticle(String title, String body) {
+		articleRepository.writeArticle(title, body);
+		return articleRepository.getLastInsertId();
 	}
 
 	public void deleteArticle(int id) {

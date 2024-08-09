@@ -26,8 +26,9 @@ public class UsrArticleController {
 	@ResponseBody
 	public String doAdd(String title, String body) {
 
-		Article article = articleService.writeArticle(title, body);
-
+		int id = articleService.writeArticle(title, body);
+		Article article = articleService.getArticleById(id);
+		
 		return "article 생성됨 : " + article;
 	} // /usr/article/doAdd?title=제목&body=내용
 

@@ -14,15 +14,15 @@ import com.example.demo.vo.Article;
 public interface ArticleRepository {
 
 	// SELECT * 
-	@Select("SELECT * FROM article ORDER BY id DESC")
+//	@Select("SELECT * FROM article ORDER BY id DESC")
 	public List<Article> getArticles();
 
 	// SELECT *
-	@Select("SELECT * FROM article WHERE id = #{id}")
+//	@Select("SELECT * FROM article WHERE id = #{id}")
 	public Article getArticleById(int id);
 
 	// INSERT INTO
-	@Insert("INSERT INTO article SET regDate = NOW(), updateDate = NOW(), title = #{title}, `body` = #{body}")
+//	@Insert("INSERT INTO article SET regDate = NOW(), updateDate = NOW(), title = #{title}, `body` = #{body}")
 	public void writeArticle(String title, String body);
 
 	// DELETE FROM
@@ -30,7 +30,7 @@ public interface ArticleRepository {
 	public void deleteArticle(int id);
 	
 	// UPDATE article 
-	@Update("UPDATE article SET updateDate = NOW(), title = #{title}, `body` = #{body} WHERE id = #{id}")
+//	@Update("UPDATE article SET updateDate = NOW(), title = #{title}, `body` = #{body} WHERE id = #{id}")
 	public void modifyArticle(int id, String title, String body);
 
 	// SELECT LAST_INSERT_ID()

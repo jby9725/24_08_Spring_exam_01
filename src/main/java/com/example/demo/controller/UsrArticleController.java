@@ -35,6 +35,7 @@ public class UsrArticleController {
 
 		ResultData writeArticleRd = articleService.writeArticle(title, body);
 
+		// 위 rd가 올바르게 생성이 되었다면 data1 부분에 id값이 들어가있다.
 		int id = (int) writeArticleRd.getData1();
 
 		Article article = articleService.getArticleById(id);

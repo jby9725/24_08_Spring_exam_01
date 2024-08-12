@@ -8,50 +8,62 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.ArticleService;
+import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
+import com.example.demo.vo.ResultData;
 
 @Controller
 public class UsrArticleController {
 
 	@Autowired
 	private ArticleService articleService;
-	
+
 // 서비스 메서드 (내부에서 동작)
 	//
 
 // 액션 메서드 (외부와 통신)
-	@RequestMapping("/usr/article/doAdd")
+	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
-	public String doAdd(String title, String body) {
+	public ResultData doWrite(String title, String body) {
 
-		int id = articleService.writeArticle(title, body);
+		if (Ut.isEmptyOrNull(title)) {
+			return ResultData.from("F-1", "제목을 입력해주세요.");
+		}
+		if (Ut.isEmptyOrNull(body)) {
+			return ResultData.from("F-2", "내용을 입력해주세요.");
+		}
+
+		ResultData writeArticleRd = articleService.writeArticle(title, body);
+
+		int id = (int) writeArticleRd.getData1();
+
 		Article article = articleService.getArticleById(id);
-		
-		return "article 생성됨 : " + article;
-	} // /usr/article/doAdd?title=제목&body=내용
 
-	
+		return ResultData.from(writeArticleRd.getResultCode(), writeArticleRd.getMsg(), article);
+	} // /usr/article/doWrite?title=제목&body=내용
+
 	@RequestMapping("/usr/article/getArticles")
 	@ResponseBody
-	public List<Article> getArticles() {
-
-		return articleService.getArticles();
+	public ResultData getArticles() {
+		List<Article> articles = articleService.getArticles();
+		return ResultData.from("S-1", "Article List", articles);
 	} // /usr/article/getArticles
 
-	
 	@RequestMapping("/usr/article/getArticle")
 	@ResponseBody
-	public Object getArticle(int id) {
+	public ResultData getArticle(int id) {
 
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
-			return id + "번 글이 없습니다.";
+//			return id + "번 글이 없습니다.";
+			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다.", id));
 		}
 
-		return id + "번 글 : " + article;
+//		return id + "번 글 : " + article;
+		return ResultData.from("S-1", Ut.f("%d번 게시글 입니다", id), article);
 	} // /usr/article/getArticle?id=1
-	
+
 	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
 	public String doDelete(int id) {
@@ -75,7 +87,7 @@ public class UsrArticleController {
 		System.out.println("id : " + id);
 		System.out.println("title : " + title);
 		System.out.println("body : " + body);
-		
+
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
@@ -83,7 +95,7 @@ public class UsrArticleController {
 		}
 
 		articleService.modifyArticle(id, title, body);
-		
+
 		return id + "번 글이 수정되었습니다.\n" + article;
 
 	} // /usr/article/doModify?id=1&title=새_제목&body=새_내용

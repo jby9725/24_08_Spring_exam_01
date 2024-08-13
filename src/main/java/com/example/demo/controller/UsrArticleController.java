@@ -24,7 +24,7 @@ public class UsrArticleController {
 // 액션 메서드 (외부와 통신)
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
-	public ResultData doWrite(String title, String body) {
+	public ResultData<Article> doWrite(String title, String body) {
 
 		if (Ut.isEmptyOrNull(title)) {
 			return ResultData.from("F-1", "제목을 입력해주세요.");
@@ -45,14 +45,14 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/getArticles")
 	@ResponseBody
-	public ResultData getArticles() {
+	public ResultData<List<Article>> getArticles() {
 		List<Article> articles = articleService.getArticles();
 		return ResultData.from("S-1", "Article List", articles);
 	} // /usr/article/getArticles
 
 	@RequestMapping("/usr/article/getArticle")
 	@ResponseBody
-	public ResultData getArticle(int id) {
+	public ResultData<Article> getArticle(int id) {
 
 		Article article = articleService.getArticleById(id);
 
@@ -67,37 +67,43 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
-	public String doDelete(int id) {
+	public ResultData<Integer> doDelete(int id) {
 
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
-			return id + "번 글이 없어 삭제되지 않았습니다.";
+//			return id + "번 글이 없어 삭제되지 않았습니다.";
+			return ResultData.from("F-1", Ut.f("%d번 글이 없어 삭제되지 않았습니다.", id), id);
 		}
 
 		articleService.deleteArticle(id);
 
-		return id + "번 글이 삭제되었습니다.";
+//		return id + "번 글이 삭제되었습니다.";
+		return ResultData.from("S-1", Ut.f("%d번 글이 삭제되었습니다.", id), id);
 
 	} // /usr/article/doDelete?id=1
 
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public Object doModify(int id, String title, String body) {
+	public ResultData<Article> doModify(int id, String title, String body) {
 
 		System.out.println("id : " + id);
 		System.out.println("title : " + title);
 		System.out.println("body : " + body);
 
+		// 수정되기 전 게시글
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
-			return id + "번 글을 찾을 수 없어 수정되지 않았습니다.";
+			return ResultData.from("F-1", Ut.f("%d번 글을 찾을 수 없어 수정되지 않았습니다.", id));
 		}
 
 		articleService.modifyArticle(id, title, body);
 
-		return id + "번 글이 수정되었습니다.\n" + article;
+		// 수정된 게시글 다시 불러옴
+		article = articleService.getArticleById(id);
+		
+		return ResultData.from("S-1", Ut.f("%d번 게시글을 수정했습니다.", id), article);
 
 	} // /usr/article/doModify?id=1&title=새_제목&body=새_내용
 }

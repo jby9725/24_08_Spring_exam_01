@@ -11,7 +11,7 @@ import com.example.demo.vo.Article;
 @Mapper
 public interface ArticleRepository {
 
-	// SELECT * 
+	// SELECT *
 //	@Select("SELECT * FROM article ORDER BY id DESC")
 	public List<Article> getArticles();
 
@@ -26,8 +26,8 @@ public interface ArticleRepository {
 	// DELETE FROM
 	@Delete("DELETE FROM article WHERE id = #{id}")
 	public void deleteArticle(int id);
-	
-	// UPDATE article 
+
+	// UPDATE article
 //	@Update("UPDATE article SET updateDate = NOW(), title = #{title}, `body` = #{body} WHERE id = #{id}")
 	public void modifyArticle(int id, String title, String body);
 

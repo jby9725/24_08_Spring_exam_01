@@ -6,14 +6,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class UsrHomeController {
-	
-	@RequestMapping("/usr/home/getArticle")
+
+	@RequestMapping("/usr/home/main")
 	@ResponseBody
-	public String getArticle() {
+	public String showMain() {
 		
-//		Article article = new Article(1, "제목", "내용");
-//		
-		return "Hello";
-	} // /getArticle
+		return "Hello! Main!";
+	}
 
 }

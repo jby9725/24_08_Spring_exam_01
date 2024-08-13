@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Select;
 
 import com.example.demo.vo.Member;
 
-
 @Mapper
 public interface MemberRepository {
 
@@ -18,7 +17,7 @@ public interface MemberRepository {
 
 	@Select("SELECT * FROM `member` WHERE loginId = #{loginId}, loginPw = #{loginPw}")
 	public Member doLogin(String loginId, String loginPw);
-	
+
 	@Select("SELECT * FROM `member` WHERE id = #{id}")
 	public Member getMemberById(int id);
 

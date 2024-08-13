@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Member {
-	
+
 	private int id;
 	private String regDate;
 	private String updateDate;
@@ -18,5 +18,5 @@ public class Member {
 	private String nickname;
 	private String cellphoneNum;
 	private String email;
-	
+
 }

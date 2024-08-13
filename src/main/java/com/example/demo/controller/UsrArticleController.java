@@ -28,11 +28,9 @@ public class UsrArticleController {
 	@ResponseBody
 	public ResultData<List<Article>> getArticles() {
 		List<Article> articles = articleService.getArticles();
-		return ResultData.from("S-1", "Article List", articles);
+		return ResultData.from("S-1", Ut.f("Article List"), "게시글 목록", articles);
 	} // /usr/article/getArticles
 
-	
-	
 	@RequestMapping("/usr/article/getArticle")
 	@ResponseBody
 	public ResultData<Article> getArticle(int id) {
@@ -41,15 +39,13 @@ public class UsrArticleController {
 
 		if (article == null) {
 //			return id + "번 글이 없습니다.";
-			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다.", id));
+			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다.", "게시글 없음", id));
 		}
 
 //		return id + "번 글 : " + article;
-		return ResultData.from("S-1", Ut.f("%d번 게시글 입니다", id), article);
+		return ResultData.from("S-1", Ut.f("%d번 게시글 입니다", id), "게시글 하나", article);
 	} // /usr/article/getArticle?id=1
 
-	
-	
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
 	public ResultData<Article> doWrite(HttpSession httpSession, String title, String body) {
@@ -80,11 +76,10 @@ public class UsrArticleController {
 
 		Article article = articleService.getArticleById(id);
 
-		return ResultData.newData(writeArticleRd, article);
+		return ResultData.newData(writeArticleRd, "생성된 게시글", article);
 
 	} // /usr/article/doWrite?title=제목&body=내용
-	
-	
+
 	// 로그인 체크 -> 유무 체크 -> 권한 체크 -> 삭제
 	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
@@ -102,29 +97,28 @@ public class UsrArticleController {
 		if (isLogined == false) {
 			return ResultData.from("F-A", "로그인을 하고 삭제할 수 있습니다.");
 		}
-		
+
 		// 유무 체크
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
 //			return id + "번 글이 없어 삭제되지 않았습니다.";
-			return ResultData.from("F-1", Ut.f("%d번 글이 없어 삭제되지 않았습니다.", id), id);
+			return ResultData.from("F-1", Ut.f("%d번 글이 없어 삭제되지 않았습니다.", id), "입력한 게시글의 아이디", id);
 		}
 
 		// 권한 체크
 		if (article.getMemberId() != loginedMemberId) {
 			return ResultData.from("F-2", Ut.f("%d번 게시글에 대한 권한이 없습니다", id));
 		}
-		
+
 		// 삭제
 		articleService.deleteArticle(id);
 
 //		return id + "번 글이 삭제되었습니다.";
-		return ResultData.from("S-1", Ut.f("%d번 글이 삭제되었습니다.", id), id);
+		return ResultData.from("S-1", Ut.f("%d번 글이 삭제되었습니다.", id), "입력하여 삭제한 게시글의 아이디", id);
 
 	} // /usr/article/doDelete?id=1
 
-	
 	// 로그인 체크 -> 유무 체크 -> 권한 체크 -> 수정
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
@@ -142,7 +136,7 @@ public class UsrArticleController {
 		if (isLogined == false) {
 			return ResultData.from("F-A", "로그인을 하고 수정할 수 있습니다.");
 		}
-		
+
 		// 수정되기 전 게시글
 		Article article = articleService.getArticleById(id);
 
@@ -155,14 +149,14 @@ public class UsrArticleController {
 		if (article.getMemberId() != loginedMemberId) {
 			return ResultData.from("F-2", Ut.f("%d번 게시글에 대한 권한이 없습니다", article.getId()));
 		}
-		
-		// 수정 
+
+		// 수정
 		articleService.modifyArticle(id, title, body);
 
 		// 수정된 게시글 다시 불러옴
 		article = articleService.getArticleById(id);
 
-		return ResultData.from("S-1", Ut.f("%d번 게시글을 수정했습니다.", id), article);
+		return ResultData.from("S-1", Ut.f("%d번 게시글을 수정했습니다.", id), "수정된 게시글", article);
 
 	} // /usr/article/doModify?id=1&title=새_제목&body=새_내용
 }

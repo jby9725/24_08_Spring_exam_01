@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.ArticleService;
@@ -24,6 +26,75 @@ public class UsrArticleController {
 	//
 
 // 액션 메서드 (외부와 통신)
+	@RequestMapping("/usr/article/list")
+	public String showArticleList(Model model) {
+		
+		List<Article> articles = articleService.getArticles();
+		model.addAttribute("articles", articles);
+		
+		return "/usr/article/list";
+	}
+
+	@RequestMapping("/usr/article/detail")
+	public String showArticleDetail(@RequestParam int id, Model model) {
+		
+		Article article = articleService.getArticleById(id);
+		model.addAttribute("article", article);
+		
+		return "/usr/article/detail";
+	}
+
+
+	@RequestMapping("/usr/article/modify")
+	public String articleModify(@RequestParam int id, Model model) {
+		
+		Article article = articleService.getArticleById(id);
+		model.addAttribute("article", article);
+		
+		return "/usr/article/modify";
+	}
+
+	@RequestMapping("/usr/article/delete")
+	public String articleDelete(@RequestParam int id, HttpSession httpSession, Model model) {
+				
+		boolean isLogined = false;
+		int loginedMemberId = 0;
+
+		// 로그인 체크
+		if (httpSession.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+			loginedMemberId = (int) httpSession.getAttribute("loginedMemberId");
+		}
+
+		if (isLogined == false) {
+			model.addAttribute("message", "로그인 뒤 이용할 수 있습니다.");
+			return "/usr/article/delete";
+		}
+
+		// 유무 체크
+		Article article = articleService.getArticleById(id);
+
+		if (article == null) {
+			model.addAttribute("message", id + "번 글이 없어 삭제되지 않았습니다.");
+			return "/usr/article/delete";
+		}
+
+		// 권한 체크
+		if (article.getMemberId() != loginedMemberId) {
+			model.addAttribute("message", "삭제 권한이 없습니다.");
+			return "/usr/article/delete";
+		}
+
+		// 삭제
+		
+		model.addAttribute("message", id + "번 글이 삭제 되었습니다.");
+		articleService.deleteArticle(id);
+		
+		model.addAttribute("article", article);
+		
+		return "/usr/article/delete";
+	}
+	
 	@RequestMapping("/usr/article/getArticles")
 	@ResponseBody
 	public ResultData<List<Article>> getArticles() {

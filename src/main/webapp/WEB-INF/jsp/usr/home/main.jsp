@@ -8,5 +8,7 @@
 </head>
 <body>
 	<h1>MAIN</h1>
+	
+	main page
 </body>
 </html>

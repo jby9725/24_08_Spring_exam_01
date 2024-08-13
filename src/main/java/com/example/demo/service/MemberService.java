@@ -40,11 +40,17 @@ public class MemberService {
 		return ResultData.from("S-1", "회원가입 성공", id);
 	}
 
+	
+	
+	
+	
+	
+	
 	private Member getMemberByNameAndEmail(String name, String email) {
 		return memberRepository.getMemberByNameAndEmail(name, email);
 	}
 
-	private Member getMemberByLoginId(String loginId) {
+	public Member getMemberByLoginId(String loginId) {
 		return memberRepository.getMemberByLoginId(loginId);
 	}
 

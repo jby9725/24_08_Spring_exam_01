@@ -12,6 +12,8 @@ import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.ResultData;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class UsrArticleController {
 
@@ -22,27 +24,6 @@ public class UsrArticleController {
 	//
 
 // 액션 메서드 (외부와 통신)
-	@RequestMapping("/usr/article/doWrite")
-	@ResponseBody
-	public ResultData<Article> doWrite(String title, String body) {
-
-		if (Ut.isEmptyOrNull(title)) {
-			return ResultData.from("F-1", "제목을 입력해주세요.");
-		}
-		if (Ut.isEmptyOrNull(body)) {
-			return ResultData.from("F-2", "내용을 입력해주세요.");
-		}
-
-		ResultData writeArticleRd = articleService.writeArticle(title, body);
-
-		// 위 rd가 올바르게 생성이 되었다면 data1 부분에 id값이 들어가있다.
-		int id = (int) writeArticleRd.getData1();
-
-		Article article = articleService.getArticleById(id);
-
-		return ResultData.from(writeArticleRd.getResultCode(), writeArticleRd.getMsg(), article);
-	} // /usr/article/doWrite?title=제목&body=내용
-
 	@RequestMapping("/usr/article/getArticles")
 	@ResponseBody
 	public ResultData<List<Article>> getArticles() {
@@ -50,6 +31,8 @@ public class UsrArticleController {
 		return ResultData.from("S-1", "Article List", articles);
 	} // /usr/article/getArticles
 
+	
+	
 	@RequestMapping("/usr/article/getArticle")
 	@ResponseBody
 	public ResultData<Article> getArticle(int id) {
@@ -65,10 +48,59 @@ public class UsrArticleController {
 		return ResultData.from("S-1", Ut.f("%d번 게시글 입니다", id), article);
 	} // /usr/article/getArticle?id=1
 
+	
+	
+	@RequestMapping("/usr/article/doWrite")
+	@ResponseBody
+	public ResultData<Article> doWrite(HttpSession httpSession, String title, String body) {
+
+		boolean isLogined = false;
+		int loginedMemberId = 0;
+
+		if (httpSession.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+			loginedMemberId = (int) httpSession.getAttribute("loginedMemberId");
+		}
+
+		if (isLogined == false) {
+			return ResultData.from("F-A", "로그인 하고 써");
+		}
+
+		if (Ut.isEmptyOrNull(title)) {
+			return ResultData.from("F-1", "제목을 입력해주세요.");
+		}
+		if (Ut.isEmptyOrNull(body)) {
+			return ResultData.from("F-2", "내용을 입력해주세요.");
+		}
+
+		ResultData writeArticleRd = articleService.writeArticle(loginedMemberId, title, body);
+
+		// 위 rd가 올바르게 생성이 되었다면 data1 부분에 id값이 들어가있다.
+		int id = (int) writeArticleRd.getData1();
+
+		Article article = articleService.getArticleById(id);
+
+		return ResultData.newData(writeArticleRd, article);
+
+	} // /usr/article/doWrite?title=제목&body=내용
+	
+	
 	@RequestMapping("/usr/article/doDelete")
 	@ResponseBody
-	public ResultData<Integer> doDelete(int id) {
+	public ResultData<Integer> doDelete(HttpSession httpSession, int id) {
 
+		boolean isLogined = false;
+		int loginedMemberId = 0;
+
+		if (httpSession.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+			loginedMemberId = (int) httpSession.getAttribute("loginedMemberId");
+		}
+
+		if (isLogined == false) {
+			return ResultData.from("F-A", "로그인 하고 써");
+		}
+		
 		Article article = articleService.getArticleById(id);
 
 		if (article == null) {
@@ -85,12 +117,20 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public ResultData<Article> doModify(int id, String title, String body) {
+	public ResultData<Article> doModify(HttpSession httpSession, int id, String title, String body) {
 
-		System.out.println("id : " + id);
-		System.out.println("title : " + title);
-		System.out.println("body : " + body);
+		boolean isLogined = false;
+		int loginedMemberId = 0;
 
+		if (httpSession.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+			loginedMemberId = (int) httpSession.getAttribute("loginedMemberId");
+		}
+
+		if (isLogined == false) {
+			return ResultData.from("F-A", "로그인 하고 써");
+		}
+		
 		// 수정되기 전 게시글
 		Article article = articleService.getArticleById(id);
 
@@ -102,7 +142,7 @@ public class UsrArticleController {
 
 		// 수정된 게시글 다시 불러옴
 		article = articleService.getArticleById(id);
-		
+
 		return ResultData.from("S-1", Ut.f("%d번 게시글을 수정했습니다.", id), article);
 
 	} // /usr/article/doModify?id=1&title=새_제목&body=새_내용

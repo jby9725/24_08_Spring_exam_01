@@ -33,17 +33,10 @@ function confirmDelete(articleId) {
     }
 }
 </script>
+<c:set var="pageTitle" value="LIST"></c:set>
+<%@ include file="../common/head.jspf"%>
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Article List</title>
-</head>
-<body>
-	<h1>Article List</h1>
-
-	<hr />
+<hr />
 
 	<table class="styled-table" >
 		<thead>

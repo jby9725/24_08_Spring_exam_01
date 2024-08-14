@@ -58,7 +58,7 @@ function confirmDelete(articleId) {
 					<td style="text-align: center;">
 						<a href="detail?id=${article.id}">${article.title}</a>
 					</td>
-					<td style="text-align: center;">${article.memberId}</td>
+					<td style="text-align: center;">${article.extra__writer}</td>
 					<td style="text-align: center;"><a href="modify?id=${article.id}">수정</a></td>
 					<td style="text-align: center;">
 						<a href="javascript:void(0);" onclick="confirmDelete(${article.id});">삭제</a>

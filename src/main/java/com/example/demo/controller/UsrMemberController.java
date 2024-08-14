@@ -1,12 +1,16 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.MemberService;
 import com.example.demo.util.Ut;
+import com.example.demo.vo.Article;
 import com.example.demo.vo.Member;
 import com.example.demo.vo.ResultData;
 
@@ -18,6 +22,20 @@ public class UsrMemberController {
 	@Autowired
 	private MemberService memberService;
 
+	
+// 서비스 메서드 (내부에서 동작)
+	//
+
+// 액션 메서드 (외부와 통신)
+		@RequestMapping("/usr/member/login")
+		public String showArticleList(Model model) {
+//			model.addAttribute("articles", articles);
+			
+			
+			return "/usr/member/login";
+		}
+		
+		
 	@RequestMapping("/usr/member/doJoin")
 	@ResponseBody
 	public ResultData<Member> doJoin(String loginId, String loginPw, String name, String nickname, String cellphoneNum,

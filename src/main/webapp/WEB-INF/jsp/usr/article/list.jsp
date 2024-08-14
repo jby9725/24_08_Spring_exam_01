@@ -33,6 +33,7 @@ function confirmDelete(articleId) {
     }
 }
 </script>
+
 <c:set var="pageTitle" value="LIST"></c:set>
 <%@ include file="../common/head.jspf"%>
 

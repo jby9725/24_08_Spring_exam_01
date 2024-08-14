@@ -88,10 +88,9 @@ public class UsrArticleController {
 		// 삭제
 		
 		model.addAttribute("message", id + "번 글이 삭제 되었습니다.");
-		articleService.deleteArticle(id);
-		
 		model.addAttribute("article", article);
-		
+		articleService.deleteArticle(id);
+				
 		return "/usr/article/delete";
 	}
 	

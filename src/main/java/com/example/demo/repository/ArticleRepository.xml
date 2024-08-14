@@ -18,9 +18,6 @@
 		WHERE id = #{id}
 	</update>
 
-	<!-- title = #{title}, -->
-	<!-- `body` = #{body} -->
-
 	<insert id="writeArticle">
 		INSERT INTO article
 		SET regDate = NOW(),
@@ -39,11 +36,12 @@
 		A.id DESC
 	</select>
 
-	<select id="getArticleById" resultType="Article">
-		SELECT A.* , M.nickname AS extra__writer
-		FROM article AS A
-		INNER JOIN `member` AS M
-		ON A.memberId = M.id
-		WHERE A.id = #{id}
-	</select>
+<!-- 	<select id="getArticleById" resultType="Article"> -->
+<!-- 		SELECT A.* , M.nickname AS extra__writer -->
+<!-- 		FROM article AS A -->
+<!-- 		INNER JOIN `member` AS M -->
+<!-- 		ON A.memberId = M.id -->
+<!-- 		WHERE A.id = #{id} -->
+<!-- 	</select> -->
+	
 </mapper>

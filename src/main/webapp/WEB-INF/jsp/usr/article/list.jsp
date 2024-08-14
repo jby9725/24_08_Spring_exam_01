@@ -28,11 +28,11 @@
 </style>
 
 <script>
-function confirmDelete(articleId) {
-    if (confirm("삭제하시겠습니까?")) {
-        window.location.href = "delete?id=" + articleId;
-    }
-}
+	function confirmDelete(articleId) {
+		if (confirm("삭제하시겠습니까?")) {
+			window.location.href = "delete?id=" + articleId;
+		}
+	}
 </script>
 
 <c:set var="pageTitle" value="LIST"></c:set>
@@ -40,27 +40,34 @@ function confirmDelete(articleId) {
 
 <hr />
 
-	<table class="styled-table" >
-		<thead>
+<div class="mb-4">
+	<button onclick="window.location.href='/usr/article/write'" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600"> 글 작성
+	</button>
+</div>
+
+<table class="styled-table">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>RegDate</th>
+			<th>Title</th>
+			<th>Nickname</th>
+			<th>Body</th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:forEach var="article" items="${articles}">
 			<tr>
-				<th>ID</th>
-				<th>RegDate</th>
-				<th>Title</th>
-				<th>Nickname</th>
+				<td>${article.id}</td>
+				<td>${article.regDate.substring(0,10)}</td>
+				<td>
+					<a href="detail?id=${article.id}">${article.title}</a>
+				</td>
+				<td>${article.extra__writer}</td>
+				<td>${article.body}</td>
 			</tr>
-		</thead>
-		<tbody>
-			<c:forEach var="article" items="${articles}">
-				<tr>
-					<td>${article.id}</td>
-					<td>${article.regDate.substring(0,10)}</td>
-					<td>
-						<a href="detail?id=${article.id}">${article.title}</a>
-					</td>
-					<td>${article.extra__writer}</td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
+		</c:forEach>
+	</tbody>
+</table>
 
 <%@ include file="../common/foot.jspf"%>

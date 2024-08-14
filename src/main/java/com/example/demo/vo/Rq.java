@@ -18,10 +18,13 @@ public class Rq {
 	private HttpServletRequest req;
 	private HttpServletResponse resp;
 
-	public Rq(HttpServletRequest req, HttpServletResponse resp) {
+	private HttpSession session;
+	
+	public Rq(HttpSession session, HttpServletRequest req, HttpServletResponse resp) {
 		this.req = req;
 		this.resp = resp;
-
+		this.session = req.getSession();
+		
 		HttpSession httpSession = req.getSession();
 
 		if (httpSession.getAttribute("loginedMemberId") != null) {
@@ -51,4 +54,13 @@ public class Rq {
 			e.printStackTrace();
 		}
 	}
+
+	public void logout() {
+		session.removeAttribute("loginedMemberId");
+	}
+
+	public void login(Member member) {
+		session.setAttribute("loginedMemberId", member.getId());
+	}
+
 }

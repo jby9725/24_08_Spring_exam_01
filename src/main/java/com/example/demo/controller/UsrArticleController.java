@@ -27,6 +27,12 @@ public class UsrArticleController {
 	//
 
 // 액션 메서드 (외부와 통신)
+	@RequestMapping("/usr/article/write")
+	public String writeArticle(Model model) {
+		
+		return "/usr/article/write";
+	}
+	
 	@RequestMapping("/usr/article/list")
 	public String showArticleList(Model model) {
 
@@ -135,7 +141,7 @@ public class UsrArticleController {
 	// 로그인 체크 -> 유무 체크 -> 권한 체크 -> 수정
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
-	public ResultData<Article> doModify(HttpServletRequest req, int id, String title, String body) {
+	public String doModify(HttpServletRequest req, int id, String title, String body) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 
@@ -144,14 +150,16 @@ public class UsrArticleController {
 
 		// 게시글 유무 체크
 		if (article == null) {
-			return ResultData.from("F-1", Ut.f("%d번 글을 찾을 수 없어 수정되지 않았습니다.", id));
+//			return ResultData.from("F-1", Ut.f("%d번 글을 찾을 수 없어 수정되지 않았습니다.", id));
+			return Ut.jsHistoryBack("F-1", Ut.f("%d번 글을 찾을 수 없어 수정되지 않았습니다.", id));
 		}
 
 		// 권한 체크
 		ResultData userCanModifyRd = articleService.userCanModify(rq.getLoginedMemberId(), article);
 
 		if (userCanModifyRd.isFail()) {
-			return userCanModifyRd;
+			return Ut.jsHistoryBack("F-2", Ut.f("%d번 글을 수정할 권한이 없습니다.", id));
+//			return userCanModifyRd;
 		}
 
 		// 수정
@@ -162,7 +170,8 @@ public class UsrArticleController {
 		// 수정된 게시글 다시 불러옴
 		article = articleService.getArticleById(id);
 
-		return ResultData.from(userCanModifyRd.getResultCode(), userCanModifyRd.getMsg(), "수정 된 게시글", article);
-
+//		return ResultData.from(userCanModifyRd.getResultCode(), userCanModifyRd.getMsg(), "수정 된 게시글", article);
+//		return Ut.jsHistoryBack("S-1", Ut.f("%d번 글을 수정하였습니다.", id));
+		return Ut.jsReplace(userCanModifyRd.getResultCode(), userCanModifyRd.getMsg(), "../article/list");
 	} // /usr/article/doModify?id=1&title=새_제목&body=새_내용
 }

@@ -19,12 +19,16 @@
 		<td>${article.regDate}</td>
 	</tr>
 	<tr>
-		<th>Body</th>
-		<td>${article.body}</td>
-	</tr>
-	<tr>
 		<th>Writer</th>
 		<td>${article.extra__writer}</td>
+	</tr>
+	<tr>
+		<th>BoardId</th>
+		<td>${article.boardId}</td>
+	</tr>
+	<tr>
+		<th>Body</th>
+		<td>${article.body}</td>
 	</tr>
 </table>
 

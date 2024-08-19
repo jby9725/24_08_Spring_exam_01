@@ -23,6 +23,7 @@
 		SET regDate = NOW(),
 		updateDate = NOW(),
 		memberId = #{memberId},
+		boardId = #{boardId},
 		title = #{title},
 		`body` = #{body}
 	</insert>
@@ -35,6 +36,8 @@
 		ORDER BY
 		A.id DESC
 	</select>
+
+
 
 <!-- 	<select id="getArticleById" resultType="Article"> -->
 <!-- 		SELECT A.* , M.nickname AS extra__writer -->

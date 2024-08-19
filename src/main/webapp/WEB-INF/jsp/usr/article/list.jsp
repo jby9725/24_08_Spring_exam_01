@@ -40,8 +40,8 @@
 <hr />
 
 <div class="mb-4">
-	<button onclick="window.location.href='/usr/article/write'" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600"> 글 작성
-	</button>
+	<button onclick="window.location.href='/usr/article/write'"
+		class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">글 작성</button>
 </div>
 
 <table class="styled-table">
@@ -66,6 +66,11 @@
 				<td>${article.body}</td>
 			</tr>
 		</c:forEach>
+		<c:if test="${empty articles}">
+			<tr>
+				<td colspan="4" style="text-align: center;">게시글이 없습니다</td>
+			</tr>
+		</c:if>
 	</tbody>
 </table>
 

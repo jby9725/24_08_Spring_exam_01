@@ -30,8 +30,18 @@ public interface ArticleRepository {
 			""")
 	public Article getForPrintArticle(int id);
 	
+	@Select("""
+			SELECT A.* , M.nickname AS extra__writer
+			FROM article AS A
+			INNER JOIN `member` AS M
+			ON A.memberId = M.id
+			WHERE A.boardId = #{boardId}
+			ORDER BY A.id DESC
+			""")
+	public List<Article> getForPrintArticles(int boardId);
+	
 //	@Insert("INSERT INTO article SET regDate = NOW(), updateDate = NOW(), title = #{title}, `body` = #{body}")
-	public void writeArticle(int memberId, String title, String body);
+	public void writeArticle(int memberId, String title, String body, String boardId);
 
 	@Delete("DELETE FROM article WHERE id = #{id}")
 	public void deleteArticle(int id);

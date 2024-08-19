@@ -14,7 +14,7 @@
 <!-- 테일윈드 치트시트 : https://nerdcave.com/tailwind-cheat-sheet -->
 
 <!-- daisyUI -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/4.12.10/full.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/4.12.10/full.css" />
 
 <!DOCTYPE html>
 <html>
@@ -33,8 +33,25 @@
 				<li>
 					<a class="hover:underline" href="/">HOME</a>
 				</li>
+				<!-- 				<li> -->
+				<!-- 					<a class="hover:underline" href="../article/list">LIST</a> -->
+				<!-- 				</li> -->
+
 				<li>
-					<a class="hover:underline" href="../article/list">LIST</a>
+					<div class="dropdown dropdown-hover">
+						<div tabindex="0" role="button">LIST</div>
+						<ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+							<li>
+								<a href="../article/list?boardId=1">NOTICE</a>
+							</li>
+							<li>
+								<a href="../article/list?boardId=2">FREE</a>
+							</li>
+							<li>
+								<a href="../article/list?boardId=3">QnA</a>
+							</li>
+						</ul>
+					</div>
 				</li>
 
 				<c:if test="${!rq.isLogined() }">

@@ -1,13 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:set var="pageTitle" value="LIST"></c:set>
+<c:set var="pageTitle" value="${board.code } LIST"></c:set>
 
 <style>
 .styled-table {
 	width: 100%;
 	border-collapse: collapse;
-	background-color: black;
-	border: 2px solid yellow;
+	border: 2px solid blue;
 }
 
 .styled-table th, .styled-table td {

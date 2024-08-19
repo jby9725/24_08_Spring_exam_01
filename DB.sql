@@ -1,10 +1,11 @@
+###(INIT 시작)#########
+# DB 세팅
+DROP DATABASE IF EXISTS `24_08_Spring`;
 CREATE DATABASE `24_08_Spring`;
 
 USE `24_08_Spring`;
 
-DROP TABLE article;
-DROP TABLE `member`;
-
+# 게시글 테이블 생성
 CREATE TABLE article (
     `id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `regDate` DATETIME NOT NULL,
@@ -14,6 +15,7 @@ CREATE TABLE article (
     `body` TEXT NOT NULL
 );
 
+# 회원 테이블 생성
 CREATE TABLE `member`(
       id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
       regDate DATETIME NOT NULL,
@@ -30,11 +32,44 @@ CREATE TABLE `member`(
 );
 
 
+# 게시판(board) 테이블 생성
+CREATE TABLE board (
+      id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+      regDate DATETIME NOT NULL,
+      updateDate DATETIME NOT NULL,
+      `code` CHAR(50) NOT NULL UNIQUE COMMENT 'notice(공지사항) free(자유) QnA(질의응답) ...',
+      `name` CHAR(20) NOT NULL UNIQUE COMMENT '게시판 이름',
+      delStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '삭제 여부 (0=삭제 전, 1=삭제 후)',
+      delDate DATETIME COMMENT '삭제 날짜'
+);
+
+## 게시판(board) 테스트 데이터 생성
+INSERT INTO board
+SET regDate = NOW(),
+updateDate = NOW(),
+`code` = 'notice',
+`name` = '공지사항';
+
+INSERT INTO board
+SET regDate = NOW(),
+updateDate = NOW(),
+`code` = 'free',
+`name` = '자유';
+
+INSERT INTO board
+SET regDate = NOW(),
+updateDate = NOW(),
+`code` = 'QnA',
+`name` = '질의응답';
+
+ALTER TABLE article ADD COLUMN boardId INT(10) UNSIGNED NOT NULL AFTER `memberId`;
+
 -- 문자열 붙이기 + 랜덤 수 출력
 INSERT INTO article
 SET regDate = NOW(),
     updateDate = NOW(),
-    memberId = CEILING(RAND() * 3),   
+    memberId = CEILING(RAND() * 3),
+    boardId = CEILING(RAND() * 3),
     title = CONCAT('제목', SUBSTRING(RAND() * 1000 FROM 1 FOR 2)),
     `body` = CONCAT('내용', SUBSTRING(RAND() * 1000 FROM 1 FOR 2));
 
@@ -74,13 +109,18 @@ nickname = '회원2_닉네임',
 cellphoneNum = '01056785678',
 email = 'abcde@gmail.com';
 
+###(INIT 끝)
+##########################################
+
 SELECT *
 FROM article
 ORDER BY id DESC;
 
 SELECT *
 FROM `member`;
-    
+
+SELECT *
+FROM `board`;
 
 -- 마지막에 추가된 데이터의 아이디
 SELECT LAST_INSERT_ID();

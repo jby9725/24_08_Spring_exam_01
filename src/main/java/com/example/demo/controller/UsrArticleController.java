@@ -19,6 +19,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class UsrArticleController {
+	
+	@Autowired
+	private Rq rq;
 
 	@Autowired
 	private ArticleService articleService;
@@ -55,9 +58,16 @@ public class UsrArticleController {
 	}
 
 	@RequestMapping("/usr/article/modify")
-	public String articleModify(@RequestParam int id, Model model) {
+	public String articleModify(HttpServletRequest req, Model model, int id) {
 
-		Article article = articleService.getArticleById(id);
+		Rq rq = (Rq) req.getAttribute("rq");
+
+		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
+
+		if (article == null) {
+			return Ut.jsHistoryBack("F-1", Ut.f("%d번 게시글은 없습니다", id));
+		}
+
 		model.addAttribute("article", article);
 
 		return "/usr/article/modify";

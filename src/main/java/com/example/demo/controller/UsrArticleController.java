@@ -31,7 +31,7 @@ public class UsrArticleController {
 
 // 액션 메서드 (외부와 통신)
 	@RequestMapping("/usr/article/write")
-	public String writeArticle(Model model) {
+	public String writeArticle(HttpServletRequest req) {
 		
 		return "/usr/article/write";
 	}
@@ -97,15 +97,15 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
-	public ResultData<Article> doWrite(HttpServletRequest req, String title, String body) {
+	public String doWrite(HttpServletRequest req, String title, String body) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		if (Ut.isEmptyOrNull(title)) {
-			return ResultData.from("F-1", "제목을 입력해주세요");
+			return Ut.jsHistoryBack("F-1", "제목을 입력해주세요");
 		}
 		if (Ut.isEmptyOrNull(body)) {
-			return ResultData.from("F-2", "내용을 입력해주세요");
+			return Ut.jsHistoryBack("F-2", "내용을 입력해주세요");
 		}
 
 		ResultData writeArticleRd = articleService.writeArticle(rq.getLoginedMemberId(), title, body);
@@ -115,7 +115,7 @@ public class UsrArticleController {
 
 		Article article = articleService.getArticleById(id);
 
-		return ResultData.newData(writeArticleRd, "생성된 게시글", article);
+		return Ut.jsReplace(writeArticleRd.getResultCode(), writeArticleRd.getMsg(), "../article/detail?id=" + id);
 	}
 
 	// 로그인 체크 -> 유무 체크 -> 권한 체크 -> 삭제

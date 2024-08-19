@@ -48,7 +48,7 @@
             <button type="submit" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">
                 회원가입
             </button>
-            <a href="/usr/member/login" class="text-sm text-yellow-500 hover:underline">로그인 페이지로</a>
+            <a href="/usr/member/login" class="btn text-sm text-yellow-500 hover:underline">로그인 페이지로</a>
         </div>
     </form>
 </div>

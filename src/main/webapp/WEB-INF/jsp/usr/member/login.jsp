@@ -23,7 +23,7 @@
 </form>
 
 <div class="btns">
-	<button type="button" onclick="history.back()">뒤로가기</button>
+	<button class="btn" type="button" onclick="history.back()">뒤로가기</button>
 </div>
 
 

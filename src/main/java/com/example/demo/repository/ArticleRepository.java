@@ -47,30 +47,47 @@ public interface ArticleRepository {
 				</script>
 			""")
 	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake);
-//	@Select("""
-//			SELECT A.* , M.nickname AS extra__writer
-//			FROM article AS A
-//			INNER JOIN `member` AS M
-//			ON A.memberId = M.id
-//			WHERE A.boardId = #{boardId}
-//			ORDER BY A.id DESC
-//			LIMIT #{page}, #{pageSize}
-//			""")
-//	public List<Article> getForPrintArticles(int boardId, int page, int pageSize);
+
+	@Select("""
+				<script>
+					SELECT A.* , M.nickname AS extra__writer
+					FROM article AS A
+					INNER JOIN `member` AS M
+					ON A.memberId = M.id
+					WHERE 1
+					<if test="boardId != 0">
+						AND boardId = #{boardId}
+					</if>
+					<if test="criteria != null and keyword != null">
+						AND ${criteria} LIKE CONCAT('%', #{keyword}, '%')
+					</if>
+					ORDER BY A.id DESC
+					<if test="limitFrom >= 0">
+						LIMIT #{limitFrom}, #{limitTake}
+					</if>
+					</script>
+				""")
+	public List<Article> getForPrintSearchArticles(int boardId, int limitFrom, int limitTake, String keyword,
+			String criteria);
 
 	@Select("""
 			<script>
 				SELECT COUNT(*) AS cnt
-				FROM article
+				FROM article AS A
+				INNER JOIN `member` AS M
+				ON A.memberId = M.id
 				WHERE 1
 				<if test="boardId != 0">
 					AND boardId = #{boardId}
 				</if>
-				ORDER BY id DESC;
+				<if test="criteria != null and keyword != null">
+					AND ${criteria} LIKE CONCAT('%', #{keyword}, '%')
+				</if>
+				ORDER BY A.id DESC;
 			</script>
 			""")
-	public int getArticleCount(int boardId);
-	
+	public int getArticleCount(int boardId, String criteria, String keyword);
+
 //	@Insert("INSERT INTO article SET regDate = NOW(), updateDate = NOW(), title = #{title}, `body` = #{body}")
 	public void writeArticle(int memberId, String title, String body, String boardId);
 
@@ -82,4 +99,5 @@ public interface ArticleRepository {
 
 	@Select("SELECT LAST_INSERT_ID()")
 	public int getLastInsertId();
+
 }

@@ -25,14 +25,6 @@
 }
 </style>
 
-<script>
-	function confirmDelete(articleId) {
-		if (confirm("삭제하시겠습니까?")) {
-			window.location.href = "delete?id=" + articleId;
-		}
-	}
-</script>
-
 <c:set var="pageTitle" value="${board.code } LIST"></c:set>
 <%@ include file="../common/head.jspf"%>
 
@@ -40,11 +32,33 @@
 
 <div class="mb-4">
 	<button onclick="window.location.href='/usr/article/write'"
-		class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">글 작성</button>
+		class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600">글 작성</button>
 </div>
 
-<div>${articlesCount }개</div>
+<!-- <div class="flex justify-end mb-4"> -->
+<!-- 	<select class="select select-bordered"> -->
+<!-- 		<option selected>제목</option> -->
+<!-- 		<option>내용</option> -->
+<!-- 		<option>작성자</option> -->
+<!-- 	</select> -->
+<!-- 	<input type="text" placeholder="검색어를 입력하세요" class="input input-bordered w-full max-w-xs ml-2" /> -->
+<%-- 	<button onclick="window.location.href='/usr/article/list?boardId=${boardId }&page=1'" class="ml-2 btn btn-primary">검색</button> --%>
+<!-- </div> -->
 
+<form method="POST" action="/usr/article/list">
+  <div class="flex justify-end mb-4">
+  <input type="hidden" name="page" value="1">
+    <select name="criteria" class="select select-bordered">
+      <option value="title" selected>제목</option>
+      <option value="body">내용</option>
+      <option value="nickname">작성자</option>
+    </select>
+    <input type="text" name="keyword" placeholder="검색어를 입력하세요" class="input input-bordered w-full max-w-xs ml-2" />
+    <button type="submit" class="ml-2 btn btn-primary">검색</button>
+  </div>
+</form>
+
+<div>${articlesCount }개</div>
 <table class="styled-table">
 	<thead>
 		<tr>
@@ -83,7 +97,7 @@
 	<c:set var="endPage" value="${page +  paginationLen  <= pagesCount ? page + paginationLen : pagesCount}" />
 
 	<c:if test="${startPage > 1 }">
-		<a class="btn btn-sm" href="?page=1&boardId=${boardId }">1</a>
+		<a class="btn btn-sm" href="?page=1&boardId=${boardId }&criteria=${criteria}&keyword=${keyword}">1</a>
 
 	</c:if>
 	<c:if test="${startPage > 2 }">
@@ -91,7 +105,7 @@
 	</c:if>
 
 	<c:forEach begin="${startPage }" end="${endPage }" var="i">
-		<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }" href="?page=${i }&boardId=${boardId}">${i }</a>
+		<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }" href="?page=${i }&boardId=${boardId}&criteria=${criteria}&keyword=${keyword}">${i }</a>
 	</c:forEach>
 
 	<c:if test="${endPage < pagesCount - 1 }">
@@ -99,24 +113,8 @@
 	</c:if>
 
 	<c:if test="${endPage < pagesCount }">
-		<a class="btn btn-sm" href="?page=${pagesCount }&boardId=${boardId }">${pagesCount }</a>
+		<a class="btn btn-sm" href="?page=${pagesCount }&boardId=${boardId }&criteria=${criteria}&keyword=${keyword}">${pagesCount }</a>
 	</c:if>
-</div>
-
-
-<!-- 	직관적인 페이징 -->
-<div class="pagination flex justify-center mt-3">
-	<div class="btn-group">
-
-		<c:forEach begin="1" end="${pagesCount }" var="i">
-			<a class="btn btn-sm ${param.page == i ? 'btn-active':''}" href="?page=${i }&boardId=${param.boardId}">${i }</a>
-		</c:forEach>
-	</div>
-</div>
-
-<div>
-	<!-- 검색 바 출력.. -->
-
 </div>
 
 <%@ include file="../common/foot.jspf"%>

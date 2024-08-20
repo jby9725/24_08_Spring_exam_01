@@ -21,13 +21,13 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class UsrArticleController {
-	
+
 	@Autowired
 	private Rq rq;
 
 	@Autowired
 	private BoardService boardService;
-	
+
 	@Autowired
 	private ArticleService articleService;
 
@@ -37,18 +37,20 @@ public class UsrArticleController {
 // 액션 메서드 (외부와 통신)
 	@RequestMapping("/usr/article/write")
 	public String writeArticle(HttpServletRequest req) {
-		
+
 		return "/usr/article/write";
 	}
-	
+
 	@RequestMapping("/usr/article/list")
-	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int page) {
+	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(required = false) String criteria, @RequestParam(required = false) String keyword) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
-		
+
 		Board board = boardService.getBoardById(boardId);
 
-		int articlesCount = articleService.getArticlesCount(boardId);
+		int articlesCount = articleService.getArticlesCount(boardId, criteria, keyword);
 
 		int itemsInAPage = 10;
 
@@ -58,21 +60,28 @@ public class UsrArticleController {
 		// 글 25개 -> 3page
 		// Math.ceil : 올림
 		int pagesCount = (int) Math.ceil(articlesCount / (double) itemsInAPage);
-		
-		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page);
-		
+
+		List<Article> articles;
+
+		if (keyword != null && !keyword.isEmpty()) {
+			articles = articleService.searchArticles(boardId, itemsInAPage, page, keyword, criteria);
+		} else {
+			articles = articleService.getForPrintArticles(boardId, itemsInAPage, page);
+		}
+
 		if (board == null) {
 			return rq.historyBackOnView("없는 게시판입니다.");
 		}
-		
-		
+
 		model.addAttribute("articles", articles);
 		model.addAttribute("board", board);
 		model.addAttribute("articlesCount", articlesCount);
 		model.addAttribute("pagesCount", pagesCount);
 		model.addAttribute("page", page);
 		model.addAttribute("boardId", boardId);
-		
+		model.addAttribute("criteria", criteria);
+	    model.addAttribute("keyword", keyword);
+	    
 		return "/usr/article/list";
 	}
 

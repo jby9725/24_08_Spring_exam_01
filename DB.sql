@@ -47,13 +47,13 @@ CREATE TABLE board (
 INSERT INTO board
 SET regDate = NOW(),
 updateDate = NOW(),
-`code` = 'notice',
+`code` = 'NOTICE',
 `name` = '공지사항';
 
 INSERT INTO board
 SET regDate = NOW(),
 updateDate = NOW(),
-`code` = 'free',
+`code` = 'FREE',
 `name` = '자유';
 
 INSERT INTO board
@@ -112,6 +112,17 @@ email = 'abcde@gmail.com';
 ###(INIT 끝)
 ##########################################
 
+## 게시글 테스트 데이터 대량 생성
+INSERT INTO article
+(
+    regDate, updateDate, memberId, boardId, title, `body`
+)
+SELECT NOW(), NOW(), FLOOR(RAND() * 2) + 2, CEILING(RAND() * 3), CONCAT('제목__', RAND()), CONCAT('내용__', RAND())
+FROM article;
+
+
+##########################################
+
 SELECT *
 FROM article
 ORDER BY id DESC;
@@ -121,6 +132,8 @@ FROM `member`;
 
 SELECT *
 FROM `board`;
+
+SHOW FULL COLUMNS FROM `member`;
 
 -- 마지막에 추가된 데이터의 아이디
 SELECT LAST_INSERT_ID();

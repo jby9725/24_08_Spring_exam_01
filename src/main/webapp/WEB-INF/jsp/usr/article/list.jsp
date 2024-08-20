@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:set var="pageTitle" value="${board.code } LIST"></c:set>
 
 <style>
 .styled-table {
@@ -34,7 +33,7 @@
 	}
 </script>
 
-<c:set var="pageTitle" value="LIST"></c:set>
+<c:set var="pageTitle" value="${board.code } LIST"></c:set>
 <%@ include file="../common/head.jspf"%>
 
 <hr />
@@ -44,7 +43,7 @@
 		class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">글 작성</button>
 </div>
 
-<div>${articlesCount } 개</div>
+<div>${articlesCount }개</div>
 
 <table class="styled-table">
 	<thead>
@@ -76,13 +75,47 @@
 	</tbody>
 </table>
 
-<div>
 <!-- 페이지 수 출력.. -->
+<!-- 	동적 페이징 -->
+<div class="pagination flex justify-center mt-3">
+	<c:set var="paginationLen" value="2" />
+	<c:set var="startPage" value="${page -  paginationLen  >= 1 ? page - paginationLen : 1}" />
+	<c:set var="endPage" value="${page +  paginationLen  <= pagesCount ? page + paginationLen : pagesCount}" />
 
+	<c:if test="${startPage > 1 }">
+		<a class="btn btn-sm" href="?page=1&boardId=${boardId }">1</a>
+
+	</c:if>
+	<c:if test="${startPage > 2 }">
+		<button class="btn btn-sm btn-disabled">...</button>
+	</c:if>
+
+	<c:forEach begin="${startPage }" end="${endPage }" var="i">
+		<a class="btn btn-sm ${param.page == i ? 'btn-active' : '' }" href="?page=${i }&boardId=${boardId}">${i }</a>
+	</c:forEach>
+
+	<c:if test="${endPage < pagesCount - 1 }">
+		<button class="btn btn-sm btn-disabled">...</button>
+	</c:if>
+
+	<c:if test="${endPage < pagesCount }">
+		<a class="btn btn-sm" href="?page=${pagesCount }&boardId=${boardId }">${pagesCount }</a>
+	</c:if>
+</div>
+
+
+<!-- 	직관적인 페이징 -->
+<div class="pagination flex justify-center mt-3">
+	<div class="btn-group">
+
+		<c:forEach begin="1" end="${pagesCount }" var="i">
+			<a class="btn btn-sm ${param.page == i ? 'btn-active':''}" href="?page=${i }&boardId=${param.boardId}">${i }</a>
+		</c:forEach>
+	</div>
 </div>
 
 <div>
-<!-- 검색 바 출력.. -->
+	<!-- 검색 바 출력.. -->
 
 </div>
 

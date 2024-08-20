@@ -52,18 +52,26 @@ public class UsrArticleController {
 
 		int itemsInAPage = 10;
 
+		// 페이지 수
+		// 한 페이지에 글 10개
+		// 글 20개 -> 2page
+		// 글 25개 -> 3page
+		// Math.ceil : 올림
+		int pagesCount = (int) Math.ceil(articlesCount / (double) itemsInAPage);
+		
 		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page);
 		
 		if (board == null) {
 			return rq.historyBackOnView("없는 게시판입니다.");
 		}
 		
-		System.err.println(page);
-		
 		
 		model.addAttribute("articles", articles);
 		model.addAttribute("board", board);
 		model.addAttribute("articlesCount", articlesCount);
+		model.addAttribute("pagesCount", pagesCount);
+		model.addAttribute("page", page);
+		model.addAttribute("boardId", boardId);
 		
 		return "/usr/article/list";
 	}

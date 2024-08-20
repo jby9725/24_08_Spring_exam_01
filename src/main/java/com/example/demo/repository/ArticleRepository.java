@@ -29,16 +29,47 @@ public interface ArticleRepository {
 			WHERE A.id = #{id}
 			""")
 	public Article getForPrintArticle(int id);
-	
+
 	@Select("""
-			SELECT A.* , M.nickname AS extra__writer
-			FROM article AS A
-			INNER JOIN `member` AS M
-			ON A.memberId = M.id
-			WHERE A.boardId = #{boardId}
-			ORDER BY A.id DESC
+			<script>
+				SELECT A.* , M.nickname AS extra__writer
+				FROM article AS A
+				INNER JOIN `member` AS M
+				ON A.memberId = M.id
+				WHERE 1
+				<if test="boardId != 0">
+					AND boardId = #{boardId}
+				</if>
+				ORDER BY A.id DESC
+				<if test="limitFrom >= 0">
+					LIMIT #{limitFrom}, #{limitTake}
+				</if>
+				</script>
 			""")
-	public List<Article> getForPrintArticles(int boardId);
+	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake);
+//	@Select("""
+//			SELECT A.* , M.nickname AS extra__writer
+//			FROM article AS A
+//			INNER JOIN `member` AS M
+//			ON A.memberId = M.id
+//			WHERE A.boardId = #{boardId}
+//			ORDER BY A.id DESC
+//			LIMIT #{page}, #{pageSize}
+//			""")
+//	public List<Article> getForPrintArticles(int boardId, int page, int pageSize);
+
+	@Select("""
+			<script>
+				SELECT COUNT(*) AS cnt
+				FROM article
+				WHERE 1
+				<if test="boardId != 0">
+					AND boardId = #{boardId}
+				</if>
+				ORDER BY id DESC;
+			</script>
+			""")
+	public int getArticleCount(int boardId);
 	
 //	@Insert("INSERT INTO article SET regDate = NOW(), updateDate = NOW(), title = #{title}, `body` = #{body}")
 	public void writeArticle(int memberId, String title, String body, String boardId);
@@ -48,7 +79,7 @@ public interface ArticleRepository {
 
 //	@Update("UPDATE article SET updateDate = NOW(), title = #{title}, `body` = #{body} WHERE id = #{id}")
 	public void modifyArticle(int id, String title, String body);
-	
+
 	@Select("SELECT LAST_INSERT_ID()")
 	public int getLastInsertId();
 }

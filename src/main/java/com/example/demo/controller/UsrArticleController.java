@@ -42,21 +42,29 @@ public class UsrArticleController {
 	}
 	
 	@RequestMapping("/usr/article/list")
-	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId) {
+	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int page) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 		
 		Board board = boardService.getBoardById(boardId);
 
-		List<Article> articles = articleService.getForPrintArticles(boardId);
+		int articlesCount = articleService.getArticlesCount(boardId);
+
+		int itemsInAPage = 10;
+
+		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page);
 		
 		if (board == null) {
 			return rq.historyBackOnView("없는 게시판입니다.");
 		}
 		
+		System.err.println(page);
+		
+		
 		model.addAttribute("articles", articles);
 		model.addAttribute("board", board);
-
+		model.addAttribute("articlesCount", articlesCount);
+		
 		return "/usr/article/list";
 	}
 

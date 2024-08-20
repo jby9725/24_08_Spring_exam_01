@@ -45,10 +45,17 @@ public class ArticleService {
 		return article;
 	}
 
-	public List<Article> getForPrintArticles(int boardId) {
-		return articleRepository.getForPrintArticles(boardId);
+	public List<Article> getForPrintArticles(int boardId, int itemsInAPage, int page) {
+
+//		SELECT * FROM article WHERE boardId = 1 ORDER BY DESC LIMIT 0, 10; 1page
+//		SELECT * FROM article WHERE boardId = 1 ORDER BY DESC LIMIT 10, 10; 2page
+
+		int limitFrom = (page - 1) * itemsInAPage;
+		int limitTake = itemsInAPage;
+
+		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake);
 	}
-	
+
 	public Article getArticleById(int id) {
 
 		return articleRepository.getArticleById(id);
@@ -56,6 +63,10 @@ public class ArticleService {
 
 	public List<Article> getArticles() {
 		return articleRepository.getArticles();
+	}
+
+	public int getArticlesCount(int boardId) {
+		return articleRepository.getArticleCount(boardId);
 	}
 
 	private void controlForPrintData(int loginedMemberId, Article article) {
@@ -82,64 +93,5 @@ public class ArticleService {
 		}
 		return ResultData.from("S-1", Ut.f("%d번 게시글을 수정했습니다", article.getId()), "수정된 게시글", article);
 	}
-	
-//	private ArticleRepository articleRepository;
-//
-//	public ArticleService(ArticleRepository articleRepository) {
-//		this.articleRepository = articleRepository;
-////		TestDataCreate();
-//	}
-//
-//
-//	public Article getForPrintArticle(int loginedMemberId, int id) {
-//
-//		Article article = articleRepository.getForPrintArticle(id);
-//
-//		updateForPrintData(loginedMemberId, article);
-//
-//		return article;
-//	}
-//
-//	private void updateForPrintData(int loginedMemberId, Article article) {
-//		if (article == null) {
-//			return;
-//		}
-//		ResultData userCanModifyRd = userCanModify(loginedMemberId, article);
-//		article.setUserCanModify(userCanModifyRd.isSuccess());
-//	}
-//	
-//	public ResultData userCanModify(int loginedMemberId, Article article) {
-//
-//		if (article.getMemberId() != loginedMemberId) {
-//			return ResultData.from("F-2", Ut.f("%d번 게시글에 대한 권한이 없습니다", article.getId()));
-//
-//		}
-//		return ResultData.from("S-1", Ut.f("%d번 게시글을 수정했습니다", article.getId()), "수정된 게시글", article);
-//	}
-//	
-//	public Article getArticleById(int id) {
-//
-//		return articleRepository.getArticleById(id);
-//	}
-//
-//	public List<Article> getArticles() {
-//		return articleRepository.getArticles();
-//	}
-//
-//	public ResultData writeArticle(int memberId, String title, String body) {
-//		articleRepository.writeArticle(memberId, title, body);
-//
-//		int id = articleRepository.getLastInsertId();
-//
-//		return ResultData.from("S-1", Ut.f("%d번 글이 등록되었습니다.", id), "등록된 게시글의 아이디", id);
-//	}
-//
-//	public void deleteArticle(int id) {
-//		articleRepository.deleteArticle(id);
-//	}
-//
-//	public void modifyArticle(int id, String title, String body) {
-//		articleRepository.modifyArticle(id, title, body);
-//	}
 
 }

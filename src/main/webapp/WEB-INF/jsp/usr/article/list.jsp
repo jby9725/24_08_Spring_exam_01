@@ -44,6 +44,8 @@
 		class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">글 작성</button>
 </div>
 
+<div>${articlesCount } 개</div>
+
 <table class="styled-table">
 	<thead>
 		<tr>
@@ -73,5 +75,15 @@
 		</c:if>
 	</tbody>
 </table>
+
+<div>
+<!-- 페이지 수 출력.. -->
+
+</div>
+
+<div>
+<!-- 검색 바 출력.. -->
+
+</div>
 
 <%@ include file="../common/foot.jspf"%>

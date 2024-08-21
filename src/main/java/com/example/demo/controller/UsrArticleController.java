@@ -109,6 +109,23 @@ public class UsrArticleController {
 		return rd;
 	}
 	
+	@RequestMapping("/usr/article/doIncreaseLikeCountRd")
+	@ResponseBody
+	public ResultData doIncreaseLikeCount(int id) {
+
+		ResultData increaseLikeCountRd = articleService.increaseLikeCount(id);
+
+		if (increaseLikeCountRd.isFail()) {
+			return increaseLikeCountRd;
+		}
+
+		ResultData rd = ResultData.newData(increaseLikeCountRd, "likeCount", articleService.getArticleLikeCount(id));
+
+		rd.setData2("좋아요가 증가된 게시글의 id", id);
+
+		return rd;
+	}
+	
 	@RequestMapping("/usr/article/modify")
 	public String articleModify(HttpServletRequest req, Model model, int id) {
 

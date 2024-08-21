@@ -147,4 +147,18 @@ public interface ArticleRepository {
 			WHERE id = #{id}
 			""")
 	public int getArticleHitCount(int id);
+
+	@Update("""
+			UPDATE article
+			SET `like` = `like` + 1
+			WHERE id = #{id}
+			""")
+	public int increaseLikeCount(int id);
+
+	@Select("""
+			SELECT `like`
+			FROM article
+			WHERE id = #{id}
+			""")
+	public int getArticleLikeCount(int id);
 }

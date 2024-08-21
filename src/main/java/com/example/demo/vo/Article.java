@@ -19,6 +19,7 @@ public class Article {
 	private String title;
 	private String body;
 	private int hit;
+	private int like;
 
 	private String extra__writer;
 	private boolean userCanModify;

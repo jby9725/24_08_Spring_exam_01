@@ -11,8 +11,8 @@
 .styled-table th, .styled-table td {
 	text-align: center;
 	padding: 5px;
-	border: 1px solid yellow;
-	color: yellow;
+	border: 1px solid blue;
+	color: black;
 }
 
 .styled-table th {
@@ -21,7 +21,7 @@
 
 .styled-table a {
 	text-decoration: none;
-	color: white;
+	color: red;
 }
 </style>
 
@@ -63,36 +63,42 @@
 </div>
 
 <div>${articlesCount }개</div>
-<table class="styled-table">
-	<thead>
-		<tr>
-			<th>ID</th>
-			<th>RegDate</th>
-			<th>Title</th>
-			<th>Nickname</th>
-			<th>Body</th>
-			<th>hit</th>
-		</tr>
-	</thead>
-	<tbody>
-		<c:forEach var="article" items="${articles}">
-			<tr>
-				<td>${article.id}</td>
-				<td>${article.regDate.substring(0,10)}</td>
-				<td>
-					<a href="detail?id=${article.id}">${article.title}</a>
-				</td>
-				<td>${article.extra__writer}</td>
-				<td>${article.body}</td>
-				<td>${article.hit }</td>
-			</tr>
-		</c:forEach>
-		<c:if test="${empty articles}">
-			<tr>
-				<td colspan="4" style="text-align: center;">게시글이 없습니다</td>
-			</tr>
-		</c:if>
-	</tbody>
+
+<hr />
+
+
+<table class="table-auto w-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-4 text-left">ID</th>
+            <th class="p-4 text-left">RegDate</th>
+            <th class="p-4 text-left">Title</th>
+            <th class="p-4 text-left">Nickname</th>
+            <th class="p-4 text-left">Body</th>
+            <th class="p-4 text-left">Like</th>
+            <th class="p-4 text-left">Hit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <c:forEach var="article" items="${articles}">
+            <tr class="border-b hover:bg-gray-50">
+                <td class="p-4">${article.id}</td>
+                <td class="p-4">${article.regDate.substring(0,10)}</td>
+                <td class="p-4">
+                    <a href="detail?id=${article.id}" class="text-blue-500 hover:underline">${article.title}</a>
+                </td>
+                <td class="p-4">${article.extra__writer}</td>
+                <td class="p-4">${article.body}</td>
+                <td class="p-4">${article.like}</td>
+                <td class="p-4">${article.hit}</td>
+            </tr>
+        </c:forEach>
+        <c:if test="${empty articles}">
+            <tr>
+                <td colspan="7" class="text-center p-4 text-gray-500">게시글이 없습니다</td>
+            </tr>
+        </c:if>
+    </tbody>
 </table>
 
 <!-- 페이지 수 출력.. -->

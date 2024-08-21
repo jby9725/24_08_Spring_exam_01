@@ -45,7 +45,13 @@ public class ArticleService {
 		return article;
 	}
 
-	public List<Article> getForPrintArticles(int boardId, int itemsInAPage, int page) {
+	public Article getArticleById(int id) {
+
+		return articleRepository.getArticleById(id);
+	}
+
+	public List<Article> getForPrintArticles(int boardId, int itemsInAPage, int page, String searchKeywordTypeCode,
+			String searchKeyword) {
 
 //		SELECT * FROM article WHERE boardId = 1 ORDER BY DESC LIMIT 0, 10; 1page
 //		SELECT * FROM article WHERE boardId = 1 ORDER BY DESC LIMIT 10, 10; 2page
@@ -53,31 +59,12 @@ public class ArticleService {
 		int limitFrom = (page - 1) * itemsInAPage;
 		int limitTake = itemsInAPage;
 
-		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake);
-	}
-
-	public List<Article> searchArticles(int boardId, int itemsInAPage, int page, String keyword, String criteria) {
-
-//			SELECT * FROM article WHERE boardId = 1 ORDER BY DESC LIMIT 0, 10; 1page
-//			SELECT * FROM article WHERE boardId = 1 ORDER BY DESC LIMIT 10, 10; 2page
-
-		int limitFrom = (page - 1) * itemsInAPage;
-		int limitTake = itemsInAPage;
-
-		return articleRepository.getForPrintSearchArticles(boardId, limitFrom, limitTake, keyword, criteria);
-	}
-
-	public Article getArticleById(int id) {
-
-		return articleRepository.getArticleById(id);
+		return articleRepository.getForPrintArticles(boardId, limitFrom, limitTake, searchKeywordTypeCode,
+				searchKeyword);
 	}
 
 	public List<Article> getArticles() {
 		return articleRepository.getArticles();
-	}
-
-	public int getArticlesCount(int boardId, String criteria, String keyword) {
-		return articleRepository.getArticleCount(boardId, criteria, keyword);
 	}
 
 	private void controlForPrintData(int loginedMemberId, Article article) {
@@ -103,6 +90,21 @@ public class ArticleService {
 			return ResultData.from("F-2", Ut.f("%d번 게시글에 대한 수정 권한이 없습니다", article.getId()));
 		}
 		return ResultData.from("S-1", Ut.f("%d번 게시글을 수정했습니다", article.getId()), "수정된 게시글", article);
+	}
+
+	public int getArticlesCount(int boardId, String searchKeywordTypeCode, String searchKeyword) {
+		return articleRepository.getArticleCount(boardId, searchKeywordTypeCode, searchKeyword);
+	}
+
+	public ResultData increaseHitCount(int id) {
+		int affectedRow = articleRepository.increaseHitCount(id);
+
+		if (affectedRow == 0) {
+			return ResultData.from("F-1", "해당 게시글이 없습니다.", "id", id);
+		}
+
+		return ResultData.from("S-1", "해당 게시글의 조회수가 증가합니다.", "id", id);
+
 	}
 
 }

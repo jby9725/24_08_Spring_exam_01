@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,45 +45,39 @@ public class UsrArticleController {
 	@RequestMapping("/usr/article/list")
 	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
 			@RequestParam(defaultValue = "1") int page,
-			@RequestParam(required = false) String criteria, @RequestParam(required = false) String keyword) {
+			@RequestParam(defaultValue = "title,body") String searchKeywordTypeCode,
+			@RequestParam(defaultValue = "") String searchKeyword) throws IOException {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Board board = boardService.getBoardById(boardId);
 
-		int articlesCount = articleService.getArticlesCount(boardId, criteria, keyword);
+		int articlesCount = articleService.getArticlesCount(boardId, searchKeywordTypeCode, searchKeyword);
 
-		int itemsInAPage = 10;
-
-		// 페이지 수
-		// 한 페이지에 글 10개
+		// 한페이지에 글 10개
 		// 글 20개 -> 2page
 		// 글 25개 -> 3page
-		// Math.ceil : 올림
+		int itemsInAPage = 10;
+
 		int pagesCount = (int) Math.ceil(articlesCount / (double) itemsInAPage);
 
-		List<Article> articles;
-
-		if (keyword != null && !keyword.isEmpty()) {
-			articles = articleService.searchArticles(boardId, itemsInAPage, page, keyword, criteria);
-		} else {
-			articles = articleService.getForPrintArticles(boardId, itemsInAPage, page);
-		}
+		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, searchKeywordTypeCode,
+				searchKeyword);
 
 		if (board == null) {
-			return rq.historyBackOnView("없는 게시판입니다.");
+			return rq.historyBackOnView("없는 게시판임");
 		}
 
 		model.addAttribute("articles", articles);
-		model.addAttribute("board", board);
 		model.addAttribute("articlesCount", articlesCount);
 		model.addAttribute("pagesCount", pagesCount);
+		model.addAttribute("board", board);
 		model.addAttribute("page", page);
+		model.addAttribute("searchKeywordTypeCode", searchKeywordTypeCode);
+		model.addAttribute("searchKeyword", searchKeyword);
 		model.addAttribute("boardId", boardId);
-		model.addAttribute("criteria", criteria);
-	    model.addAttribute("keyword", keyword);
-	    
-		return "/usr/article/list";
+
+		return "usr/article/list";
 	}
 
 	@RequestMapping("/usr/article/detail")
@@ -90,6 +85,12 @@ public class UsrArticleController {
 
 		Rq rq = (Rq) req.getAttribute("rq");
 
+		ResultData increaseHitCountRd = articleService.increaseHitCount(id);
+
+		if (increaseHitCountRd.isFail()) {
+			return rq.historyBackOnView(increaseHitCountRd.getMsg());
+		}
+		
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
 		model.addAttribute("article", article);

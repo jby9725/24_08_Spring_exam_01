@@ -23,6 +23,10 @@
 		<td>${article.extra__writer}</td>
 	</tr>
 	<tr>
+		<th>Views</th>
+		<td>${article.hit}</td>
+	</tr>
+	<tr>
 		<th>BoardId</th>
 		<td>${article.boardId}</td>
 	</tr>

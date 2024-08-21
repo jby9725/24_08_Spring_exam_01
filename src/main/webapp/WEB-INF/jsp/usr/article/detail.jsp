@@ -13,6 +13,18 @@
 
 <script>
 	function ArticleDetail__doIncreaseHitCount() {
+
+		// 사용자가 처음 들어오는 게시물인지 확인하는 작업.
+		// 브라우저 내 로컬 저장소에 있는 정보를 토대로 조회수를 증가/방치 한다.  
+		const localStorageKey = 'article__' + params.id + '__alreadyOnView';
+		
+		if (localStorage.getItem(localStorageKey)) {
+			return;
+		}
+		
+		localStorage.setItem(localStorageKey, true);
+
+		// 조회수 증가(부분 새로고침으로)
 		$.get('../article/doIncreaseHitCountRd', {
 			id : params.id,
 			ajaxMode : 'Y'
@@ -47,7 +59,9 @@
 	</tr>
 	<tr>
 		<th>조회수</th>
-		<td><span class="article-detail__hit-count">${article.hit}</span></td>
+		<td>
+			<span class="article-detail__hit-count">${article.hit}</span>
+		</td>
 	</tr>
 	<tr>
 		<th>게시판 아이디</th>

@@ -7,31 +7,31 @@
 
 <table border="1" cellspacing="0" cellpadding="5">
 	<tr>
-		<th>ID</th>
+		<th>번호</th>
 		<td>${article.id}</td>
 	</tr>
 	<tr>
-		<th>Title</th>
+		<th>제목</th>
 		<td>${article.title}</td>
 	</tr>
 	<tr>
-		<th>Registration Date</th>
+		<th>작성일자</th>
 		<td>${article.regDate}</td>
 	</tr>
 	<tr>
-		<th>Writer</th>
+		<th>작성자</th>
 		<td>${article.extra__writer}</td>
 	</tr>
 	<tr>
-		<th>Views</th>
+		<th>조회수</th>
 		<td>${article.hit}</td>
 	</tr>
 	<tr>
-		<th>BoardId</th>
+		<th>게시판 아이디</th>
 		<td>${article.boardId}</td>
 	</tr>
 	<tr>
-		<th>Body</th>
+		<th>내용</th>
 		<td>${article.body}</td>
 	</tr>
 </table>

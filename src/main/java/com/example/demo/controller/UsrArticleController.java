@@ -51,7 +51,11 @@ public class UsrArticleController {
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Board board = boardService.getBoardById(boardId);
-
+		
+		if (board == null) {
+			return rq.historyBackOnView("없는 게시판임");
+		}
+		
 		int articlesCount = articleService.getArticlesCount(boardId, searchKeywordTypeCode, searchKeyword);
 
 		// 한페이지에 글 10개
@@ -64,9 +68,6 @@ public class UsrArticleController {
 		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, searchKeywordTypeCode,
 				searchKeyword);
 
-		if (board == null) {
-			return rq.historyBackOnView("없는 게시판임");
-		}
 
 		model.addAttribute("articles", articles);
 		model.addAttribute("articlesCount", articlesCount);

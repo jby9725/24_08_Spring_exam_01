@@ -16,7 +16,9 @@ CREATE TABLE article (
     boardId INT(10) UNSIGNED NOT NULL,
     `title` VARCHAR(50) NOT NULL,
     `body` TEXT NOT NULL,
-    hit INT UNSIGNED NOT NULL DEFAULT 0
+    hit INT UNSIGNED NOT NULL DEFAULT 0,
+    `goodReactionPoint` INT(10) UNSIGNED NOT NULL DEFAULT 0,
+    `badReactionPoint` INT(10) UNSIGNED NOT NULL DEFAULT 0
 );
 
 # 회원 테이블 생성
@@ -136,27 +138,64 @@ email = 'goast@gmail.com';
 
 
 ### 좋아요/싫어요 테이블 테스트 데이터 생성
-INSERT INTO reactionPoint
-SET regDate = NOW(), updateDate = NOW(),
-    memberId = 2,
-    relId = 1,
-    relTypeCode = 'article',
-    `point` = +1;
 
+# 1번 회원이 1번 글에 싫어요
 INSERT INTO reactionPoint
-SET regDate = NOW(), updateDate = NOW(),
-    memberId = 3,
-    relId = 1,
-    relTypeCode = 'article',
-    `point` = -1;
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 1,
+relTypeCode = 'article',
+relId = 1,
+`point` = -1;
 
+# 1번 회원이 2번 글에 좋아요
 INSERT INTO reactionPoint
-SET regDate = NOW(), updateDate = NOW(),
-    memberId = 4,
-    relId = 1,
-    relTypeCode = 'article',
-    `point` = +1;
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 1,
+relTypeCode = 'article',
+relId = 2,
+`point` = 1;
 
+# 2번 회원이 1번 글에 싫어요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 2,
+relTypeCode = 'article',
+relId = 1,
+`point` = -1;
+
+# 2번 회원이 2번 글에 싫어요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 2,
+relTypeCode = 'article',
+relId = 2,
+`point` = -1;
+
+# 3번 회원이 1번 글에 좋아요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 3,
+relTypeCode = 'article',
+relId = 1,
+`point` = 1;
+
+## update join -> 기존 게시글의 good bad RP 값을 RP 테이블에서 추출해서 article 테이블에 채운다.
+UPDATE article AS A
+INNER JOIN (
+    SELECT RP.relTypeCode, RP.relId,
+        SUM(IF(RP.`point` > 0, RP.`point`, 0)) AS goodReactionPoint,
+        SUM(IF(RP.`point` < 0, RP.`point` * -1, 0)) AS badReactionPoint
+    FROM reactionPoint AS RP
+    GROUP BY RP.relTypeCode, RP.relId
+) AS RP_SUM
+ON A.id = RP_SUM.relId
+SET A.goodReactionPoint = RP_SUM.goodReactionPoint,
+A.badReactionPoint = RP_SUM.badReactionPoint;
 
 ###(INIT 끝)
 ##########################################
@@ -168,7 +207,6 @@ INSERT INTO article
 )
 SELECT NOW(), NOW(), FLOOR(RAND() * 2) + 2, CEILING(RAND() * 3), CONCAT('제목__', RAND()), CONCAT('내용__', RAND())
 FROM article;
-
 
 ##########################################
 
@@ -184,6 +222,51 @@ FROM `board`;
 
 SELECT *
 FROM reactionPoint;
+
+SELECT A.* , M.nickname AS extra__writer
+FROM article AS A
+INNER JOIN `member` AS M
+ON A.memberId = M.id
+WHERE A.id = 1
+
+# LEFT JOIN
+SELECT A.*, M.nickname AS extra__writer, RP.point
+FROM article AS A
+INNER JOIN `member` AS M
+ON A.memberId = M.id
+LEFT JOIN reactionPoint AS RP
+ON A.id = RP.relId AND RP.relTypeCode = 'article'
+GROUP BY A.id
+ORDER BY A.id DESC;
+
+# 서브쿼리
+SELECT A.*, 
+IFNULL(SUM(RP.point),0) AS extra__sumReactionPoint,
+IFNULL(SUM(IF(RP.point > 0,RP.point,0)),0) AS extra__goodReactionPoint,
+IFNULL(SUM(IF(RP.point < 0,RP.point,0)),0) AS extra__badReactionPoint
+FROM (
+    SELECT A.*, M.nickname AS extra__writer 
+    FROM article AS A
+    INNER JOIN `member` AS M
+    ON A.memberId = M.id) AS A
+LEFT JOIN reactionPoint AS RP
+ON A.id = RP.relId AND RP.relTypeCode = 'article'
+GROUP BY A.id
+ORDER BY A.id DESC;
+
+# JOIN
+SELECT A.*, M.nickname AS extra__writer,
+IFNULL(SUM(RP.point),0) AS extra__sumReactionPoint,
+IFNULL(SUM(IF(RP.point > 0,RP.point,0)),0) AS extra__goodReactionPoint,
+IFNULL(SUM(IF(RP.point < 0,RP.point,0)),0) AS extra__badReactionPoint
+FROM article AS A
+INNER JOIN `member` AS M
+ON A.memberId = M.id
+LEFT JOIN reactionPoint AS RP
+ON A.id = RP.relId AND RP.relTypeCode = 'article'
+GROUP BY A.id
+ORDER BY A.id DESC;
+
 
 -- 코멘트 포함해서 `member` 테이블의 정보 보기
 SHOW FULL COLUMNS FROM `member`;

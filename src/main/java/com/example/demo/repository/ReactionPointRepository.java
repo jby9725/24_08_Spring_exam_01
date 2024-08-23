@@ -11,25 +11,33 @@ import org.apache.ibatis.annotations.Update;
 import com.example.demo.vo.Article;
 
 @Mapper
-public interface ArticleRepository {
+public interface ReactionPointRepository {
 
 	@Insert("""
-			INSERT INTO article
-			SET regDate = NOW(),
-			updateDate = NOW(),
+			INSERT INTO reactionPoint
+			SET regDate = NOW(), updateDate = NOW(),
 			memberId = #{memberId},
-			boardId = #{boardId},
-			title = #{title},
-			`body` = #{body}
+			relId = #{relId},
+			relTypeCode = #{relTypeCode},
+			`point` = #{point};
 			""")
-	public void writeArticle(int memberId, String title, String body, String boardId);
-
+	public void addReactionPoint();
+	
 	@Delete("""
-			DELETE FROM article
-			WHERE id = #{id}
+			DELETE FROM reactionPoint
+			WHERE memberId = #{memberId} AND relId = #{relId} AND relTypeCode = #{relTypeCode};
 			""")
-	public void deleteArticle(int id);
-
+	public void removeReactionPoint();
+	
+	@Update("""
+			UPDATE reactionPoint
+			set updateDate = NOW(),
+			`point` = #{point}
+			WHERE memberId = #{memberId} AND relId = #{relId} AND relTypeCode = #{relTypeCode};
+			""")
+	public void updateReactionPoint();
+	
+	
 	@Update("""
 			UPDATE article
 			SET updateDate = NOW(),
@@ -41,14 +49,14 @@ public interface ArticleRepository {
 
 	@Select("""
 			SELECT A.*, M.nickname AS extra__writer,
-			IFNULL(SUM(RP.`point`),0) AS extra__sumReactionPoint,
-			IFNULL(SUM(IF(RP.`point` > 0, RP.point,0)),0) AS extra__goodReactionPoint,
-			IFNULL(SUM(IF(RP.`point` < 0, RP.point,0)),0) AS extra__badReactionPoint
+			IFNULL(SUM(RP.point),0) AS extra__sumReactionPoint,
+			IFNULL(SUM(IF(RP.point &gt; 0,RP.point,0)),0) AS extra__goodReactionPoint,
+			IFNULL(SUM(IF(RP.point &lt; 0,RP.point,0)),0) AS extra__badReactionPoint
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
-			LEFT JOIN reactionPoint RP
-			ON RP.relTypeCode = 'article' AND A.id = RP.relId
+			LEFT JOIN reactionPoint AS RP
+			ON A.id = RP.relId AND RP.relTypeCode = 'article'
 			WHERE A.id = #{id}
 				""")
 	public Article getForPrintArticle(int id);
@@ -62,15 +70,12 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-				SELECT A.*, M.nickname AS extra__writer,
-					IFNULL(SUM(RP.`point`),0) AS extra__sumReactionPoint,
-					IFNULL(SUM(IF(RP.`point` &gt; 0,RP.point,0)),0) AS extra__goodReactionPoint,
-					IFNULL(SUM(IF(RP.`point` &lt; 0,RP.point,0)),0) AS extra__badReactionPoint
+				SELECT A.* , M.nickname AS extra__writer, SUM(IFNULL(R.point, 0)) AS `like`
 				FROM article AS A
 				INNER JOIN `member` AS M
 				ON A.memberId = M.id
-				LEFT JOIN reactionPoint RP
-				ON RP.relTypeCode = 'article' AND A.id = RP.relId
+				LEFT JOIN reactionPoint R
+				ON R.relTypeCode = 'article' AND A.id = R.relId
 				WHERE 1
 				<if test="boardId != 0">
 					AND boardId = #{boardId}

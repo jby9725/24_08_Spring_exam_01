@@ -75,7 +75,9 @@
             <th class="p-4 text-left">Title</th>
             <th class="p-4 text-left">Nickname</th>
             <th class="p-4 text-left">Body</th>
+            <th class="p-4 text-left">Sum</th>
             <th class="p-4 text-left">Like</th>
+            <th class="p-4 text-left">Bad</th>
             <th class="p-4 text-left">Hit</th>
         </tr>
     </thead>
@@ -89,7 +91,9 @@
                 </td>
                 <td class="p-4">${article.extra__writer}</td>
                 <td class="p-4">${article.body}</td>
-                <td class="p-4">${article.like}</td>
+                <td class="p-4">${article.extra__sumReactionPoint}</td>
+                <td class="p-4">${article.extra__goodReactionPoint}</td>
+                <td class="p-4">${article.extra__badReactionPoint}</td>
                 <td class="p-4">${article.hit}</td>
             </tr>
         </c:forEach>

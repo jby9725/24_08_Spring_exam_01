@@ -149,6 +149,13 @@ public interface ArticleRepository {
 			""")
 	public int getArticleHitCount(int id);
 
+	@Update("""
+			UPDATE article
+			SET goodReactionPoint = goodReactionPoint + 1
+			WHERE id = #{relId}
+			""")
+	public int increaseGoodReactionPoint(int relId);
+	
 	@Insert("""
 			INSERT INTO reactionPoint
 			SET regDate = NOW(), updateDate = NOW(),

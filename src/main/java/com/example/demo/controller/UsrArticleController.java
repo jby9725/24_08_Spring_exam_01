@@ -86,17 +86,15 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/detail")
 	public String showDetail(HttpServletRequest req, Model model, int id) {
-
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
-		// -1 싫어요 , 0 표현 x, 1 좋아요
-		int userCanReaction = reactionPointService.userCanReaction(rq.getLoginedMemberId(), "article", id);
-		System.err.println(userCanReaction);
+		// -1 싫어요, 0 표현 x, 1 좋아요
+		int usersReaction = reactionPointService.usersReaction(rq.getLoginedMemberId(), "article", id);
 
 		model.addAttribute("article", article);
-		model.addAttribute("userCanReaction", userCanReaction);
+		model.addAttribute("usersReaction", usersReaction);
 
 		return "usr/article/detail";
 	}
@@ -118,24 +116,6 @@ public class UsrArticleController {
 		return rd;
 	}
 
-	
-	@RequestMapping("/usr/article/increaseLikeRd")
-	@ResponseBody
-	public ResultData doIncreaseLikeCount(int memberId, String relTypeCode, int relId) {
-		
-		ResultData increaseLikeCountRd = articleService.increaseLikeCount(memberId, relTypeCode, relId);
-
-		if (increaseLikeCountRd.isFail()) {
-			return increaseLikeCountRd;
-		}
-
-		ResultData rd = ResultData.newData(increaseLikeCountRd, "likeCount", articleService.getArticleLikeCount(relId));
-
-		rd.setData2("좋아요가 증가된 게시글의 id", relId);
-
-		return rd;
-	}
-
 	@RequestMapping("/usr/article/modify")
 	public String articleModify(HttpServletRequest req, Model model, int id) {
 
@@ -151,28 +131,6 @@ public class UsrArticleController {
 
 		return "/usr/article/modify";
 	}
-
-	@RequestMapping("/usr/article/getArticles")
-	@ResponseBody
-	public ResultData<List<Article>> getArticles() {
-		List<Article> articles = articleService.getArticles();
-		return ResultData.from("S-1", Ut.f("Article List"), "게시글 목록", articles);
-	} // /usr/article/getArticles
-
-	@RequestMapping("/usr/article/getArticle")
-	@ResponseBody
-	public ResultData<Article> getArticle(int id) {
-
-		Article article = articleService.getArticleById(id);
-
-		if (article == null) {
-//			return id + "번 글이 없습니다.";
-			return ResultData.from("F-1", Ut.f("%d번 게시글은 없습니다.", "게시글 없음", id));
-		}
-
-//		return id + "번 글 : " + article;
-		return ResultData.from("S-1", Ut.f("%d번 게시글 입니다", id), "게시글 하나", article);
-	} // /usr/article/getArticle?id=1
 
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody

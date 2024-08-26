@@ -97,13 +97,12 @@
 
 	<tr>
 		<th>좋아요 / 싫어요</th>
-		<td>
-			LIKE ${article.goodReactionPoint} / DISLIKE ${article.badReactionPoint}
-			<!-- 			<span>버튼 모양만 합시다.. </span> -->
-			<!-- 			<button class="btn btn-outline btn-success">?</button> -->
-			<!-- 			<button class="btn btn-outline btn-error">?</button> -->
-			<!-- 			<span>아래가 본 기능입니다..</span> -->
-		</td>
+		<td>LIKE ${article.goodReactionPoint} / DISLIKE ${article.badReactionPoint}</td>
+	</tr>
+
+	<tr>
+		<th>좋아요 합산</th>
+		<td>${usersReaction }</td>
 	</tr>
 
 	<tr>
@@ -121,9 +120,8 @@
 	<div class="flex justify-center space-x-4">
 
 		<a href="/usr/reactionPoint/doGoodReaction?relTypeCode=article&relId=${param.id }&replaceUri=${rq.currentUri}"
-			class="btn btn-outline btn-success">👍(❁´◡`❁) ${article.goodReactionPoint}</a>
-		<a href="/usr/reactionPoint/doBadReaction" class="btn btn-outline btn-error">👎ಠ_ಠ
-			${article.badReactionPoint}</a>
+			class="btn btn-outline btn-success"> 👍(❁´◡`❁) ${article.goodReactionPoint}</a>
+		<a href="/usr/reactionPoint/doBadReaction" class="btn btn-outline btn-error">👎ಠ_ಠ ${article.badReactionPoint}</a>
 
 	</div>
 

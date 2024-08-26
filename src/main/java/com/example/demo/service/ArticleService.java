@@ -110,18 +110,15 @@ public class ArticleService {
 	public Object getArticleHitCount(int id) {
 		return articleRepository.getArticleHitCount(id);
 	}
-
-	public ResultData increaseLikeCount(int memberId, String relTypeCode, int relId) {
-		int affectedRow = articleRepository.increaseLikeCount(memberId, relTypeCode, relId);
+	
+	public ResultData increaseGoodReactionPoint(int relId) {
+		int affectedRow = articleRepository.increaseGoodReactionPoint(relId);
 
 		if (affectedRow == 0) {
-			return ResultData.from("F-1", "해당 글이 없습니다.", "id", relId);
+			return ResultData.from("F-1", "없는 게시물");
 		}
 
-		return ResultData.from("S-1", "해당 글의 좋아요가 증가합니다.", "id", relId);
+		return ResultData.from(null, null);
 	}
-
-	public Object getArticleLikeCount(int id) {
-		return articleRepository.getArticleLikeCount(id);
-	}
+	
 }

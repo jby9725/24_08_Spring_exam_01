@@ -16,6 +16,7 @@ import lombok.Getter;
 @Component
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Rq {
+
 	@Getter
 	private boolean isLogined;
 	@Getter
@@ -25,7 +26,7 @@ public class Rq {
 	private HttpServletResponse resp;
 
 	private HttpSession session;
-	
+
 	public Rq(HttpServletRequest req, HttpServletResponse resp) {
 		this.req = req;
 		this.resp = resp;
@@ -37,7 +38,7 @@ public class Rq {
 			isLogined = true;
 			loginedMemberId = (int) httpSession.getAttribute("loginedMemberId");
 		}
-		
+
 		this.req.setAttribute("rq", this);
 	}
 
@@ -80,7 +81,7 @@ public class Rq {
 		req.setAttribute("historyBack", true);
 		return "usr/common/js";
 	}
-	
+
 	public String getCurrentUri() {
 		String currentUri = req.getRequestURI();
 		String queryString = req.getQueryString();
@@ -96,5 +97,4 @@ public class Rq {
 
 		return currentUri;
 	}
-	
 }

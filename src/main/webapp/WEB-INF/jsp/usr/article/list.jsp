@@ -92,8 +92,8 @@
                 <td class="p-4">${article.extra__writer}</td>
                 <td class="p-4">${article.body}</td>
                 <td class="p-4">${article.extra__sumReactionPoint}</td>
-                <td class="p-4">${article.extra__goodReactionPoint}</td>
-                <td class="p-4">${article.extra__badReactionPoint}</td>
+                <td class="p-4">${article.goodReactionPoint}</td>
+                <td class="p-4">${article.badReactionPoint}</td>
                 <td class="p-4">${article.hit}</td>
             </tr>
         </c:forEach>

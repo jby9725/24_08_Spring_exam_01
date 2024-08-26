@@ -34,10 +34,28 @@
 			$('.article-detail__hit-count').empty().html(data.data1);
 		}, 'json')
 	}
+	
+	function ArticleDetail__doIncreaseLikeCount() {
+	    // 서버로 좋아요 요청을 보냄
+	    $.post('../article/increaseLikeRd', { articleId: params.id }, function(data) {
+	        if (data.success) {
+	            // 서버에서 새로운 좋아요 수를 반환받아 화면에 표시
+	        	id : params.id,
+				ajaxMode : 'Y'
+			}, function(data) {
+				console.log(data);
+				console.log(data.data1);
+	            $('.article-detail__like-count').text(data.data1);
+	        } else {
+	            alert("좋아요 처리에 실패했습니다.");
+	        }
+	    }, 'json');
+	}
 
 	$(function() {
 		// 		ArticleDetail__doIncreaseHitCount();
 		setTimeout(ArticleDetail__doIncreaseHitCount, 1000);
+		setTimeout(ArticleDetail__doIncreaseLikeCount, 100);
 	})
 </script>
 
@@ -65,23 +83,29 @@
 		</td>
 	</tr>
 	<tr>
-		<th>합산</th>
+		<th>좋아요
 		<td>
-			<span class="">${article.extra__sumReactionPoint}</span>
-		</td>
-	</tr>
-	<tr>
-		<th>좋아요</th>
-		<td>
-			<span class="">${article.extra__goodReactionPoint}</span>
+			<span class="article-detail__like-count">${article.goodReactionPoint}</span>
 		</td>
 	</tr>
 	<tr>
 		<th>싫어요</th>
 		<td>
-			<span class="">${article.extra__badReactionPoint}</span>
+			<span class="">${article.badReactionPoint}</span>
 		</td>
 	</tr>
+
+	<tr>
+		<th>좋아요 / 싫어요</th>
+		<td>
+			LIKE ${article.goodReactionPoint} / DISLIKE ${article.badReactionPoint}
+			<!-- 			<span>버튼 모양만 합시다.. </span> -->
+			<!-- 			<button class="btn btn-outline btn-success">?</button> -->
+			<!-- 			<button class="btn btn-outline btn-error">?</button> -->
+			<!-- 			<span>아래가 본 기능입니다..</span> -->
+		</td>
+	</tr>
+
 	<tr>
 		<th>게시판 번호</th>
 		<td>${article.boardId}</td>
@@ -95,8 +119,12 @@
 <div class="btns flex flex-col space-y-4">
 	<!-- 좋아요와 싫어요 버튼을 한 줄에 배치 -->
 	<div class="flex justify-center space-x-4">
-		<button class="btn btn-accent w-auto" type="button">좋아요</button>
-		<button class="btn btn-error w-auto" type="button">싫어요</button>
+
+		<a href="/usr/reactionPoint/doGoodReaction?relTypeCode=article&relId=${param.id }&replaceUri=${rq.currentUri}"
+			class="btn btn-outline btn-success">👍(❁´◡`❁) ${article.goodReactionPoint}</a>
+		<a href="/usr/reactionPoint/doBadReaction" class="btn btn-outline btn-error">👎ಠ_ಠ
+			${article.badReactionPoint}</a>
+
 	</div>
 
 	<!-- 뒤로 가기, 수정, 삭제 버튼들 -->

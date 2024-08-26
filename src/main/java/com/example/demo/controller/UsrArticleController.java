@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.BoardService;
+import com.example.demo.service.ReactionPointService;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.Board;
@@ -27,10 +28,13 @@ public class UsrArticleController {
 	private Rq rq;
 
 	@Autowired
+	private ArticleService articleService;
+
+	@Autowired
 	private BoardService boardService;
 
 	@Autowired
-	private ArticleService articleService;
+	private ReactionPointService reactionPointService;
 
 // 서비스 메서드 (내부에서 동작)
 	//
@@ -51,11 +55,11 @@ public class UsrArticleController {
 		Rq rq = (Rq) req.getAttribute("rq");
 
 		Board board = boardService.getBoardById(boardId);
-		
+
 		if (board == null) {
 			return rq.historyBackOnView("없는 게시판임");
 		}
-		
+
 		int articlesCount = articleService.getArticlesCount(boardId, searchKeywordTypeCode, searchKeyword);
 
 		// 한페이지에 글 10개
@@ -67,7 +71,6 @@ public class UsrArticleController {
 
 		List<Article> articles = articleService.getForPrintArticles(boardId, itemsInAPage, page, searchKeywordTypeCode,
 				searchKeyword);
-
 
 		model.addAttribute("articles", articles);
 		model.addAttribute("articlesCount", articlesCount);
@@ -88,7 +91,12 @@ public class UsrArticleController {
 
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
+		// -1 싫어요 , 0 표현 x, 1 좋아요
+		int userCanReaction = reactionPointService.userCanReaction(rq.getLoginedMemberId(), "article", id);
+		System.err.println(userCanReaction);
+
 		model.addAttribute("article", article);
+		model.addAttribute("userCanReaction", userCanReaction);
 
 		return "usr/article/detail";
 	}
@@ -109,24 +117,25 @@ public class UsrArticleController {
 
 		return rd;
 	}
-	
-	@RequestMapping("/usr/article/doIncreaseLikeCountRd")
-	@ResponseBody
-	public ResultData doIncreaseLikeCount(int id) {
 
-		ResultData increaseLikeCountRd = articleService.increaseLikeCount(id);
+	
+	@RequestMapping("/usr/article/increaseLikeRd")
+	@ResponseBody
+	public ResultData doIncreaseLikeCount(int memberId, String relTypeCode, int relId) {
+		
+		ResultData increaseLikeCountRd = articleService.increaseLikeCount(memberId, relTypeCode, relId);
 
 		if (increaseLikeCountRd.isFail()) {
 			return increaseLikeCountRd;
 		}
 
-		ResultData rd = ResultData.newData(increaseLikeCountRd, "likeCount", articleService.getArticleLikeCount(id));
+		ResultData rd = ResultData.newData(increaseLikeCountRd, "likeCount", articleService.getArticleLikeCount(relId));
 
-		rd.setData2("좋아요가 증가된 게시글의 id", id);
+		rd.setData2("좋아요가 증가된 게시글의 id", relId);
 
 		return rd;
 	}
-	
+
 	@RequestMapping("/usr/article/modify")
 	public String articleModify(HttpServletRequest req, Model model, int id) {
 

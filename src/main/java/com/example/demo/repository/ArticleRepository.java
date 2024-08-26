@@ -39,16 +39,12 @@ public interface ArticleRepository {
 			""")
 	public void modifyArticle(int id, String title, String body);
 
+	// 진행 과정중 article 테이블에 좋아요/싫어요 자리를 추가해서 조인이 필요 없어짐.
 	@Select("""
-			SELECT A.*, M.nickname AS extra__writer,
-			IFNULL(SUM(RP.`point`),0) AS extra__sumReactionPoint,
-			IFNULL(SUM(IF(RP.`point` > 0, RP.point,0)),0) AS extra__goodReactionPoint,
-			IFNULL(SUM(IF(RP.`point` < 0, RP.point,0)),0) AS extra__badReactionPoint
+			SELECT A.*, M.nickname AS extra__writer
 			FROM article AS A
 			INNER JOIN `member` AS M
 			ON A.memberId = M.id
-			LEFT JOIN reactionPoint RP
-			ON RP.relTypeCode = 'article' AND A.id = RP.relId
 			WHERE A.id = #{id}
 				""")
 	public Article getForPrintArticle(int id);
@@ -62,15 +58,10 @@ public interface ArticleRepository {
 
 	@Select("""
 			<script>
-				SELECT A.*, M.nickname AS extra__writer,
-					IFNULL(SUM(RP.`point`),0) AS extra__sumReactionPoint,
-					IFNULL(SUM(IF(RP.`point` &gt; 0,RP.point,0)),0) AS extra__goodReactionPoint,
-					IFNULL(SUM(IF(RP.`point` &lt; 0,RP.point,0)),0) AS extra__badReactionPoint
+				SELECT A.*, M.nickname AS extra__writer
 				FROM article AS A
 				INNER JOIN `member` AS M
 				ON A.memberId = M.id
-				LEFT JOIN reactionPoint RP
-				ON RP.relTypeCode = 'article' AND A.id = RP.relId
 				WHERE 1
 				<if test="boardId != 0">
 					AND boardId = #{boardId}
@@ -92,7 +83,6 @@ public interface ArticleRepository {
 						</otherwise>
 					</choose>
 				</if>
-				GROUP BY A.id
 				ORDER BY A.id DESC
 				<if test="limitFrom >= 0">
 					LIMIT #{limitFrom}, #{limitTake}
@@ -159,15 +149,18 @@ public interface ArticleRepository {
 			""")
 	public int getArticleHitCount(int id);
 
-	@Update("""
-			UPDATE article
-			SET `like` = `like` + 1
-			WHERE id = #{id}
+	@Insert("""
+			INSERT INTO reactionPoint
+			SET regDate = NOW(), updateDate = NOW(),
+			memberId = #{memberId},
+			relTypeCode = #{relTypeCode},
+			relId = #{relId},
+			`point` = 1
 			""")
-	public int increaseLikeCount(int id);
+	public int increaseLikeCount(int memberId, String relTypeCode, int relId);
 
 	@Select("""
-			SELECT `like`
+			SELECT `goodReactionPoint`
 			FROM article
 			WHERE id = #{id}
 			""")

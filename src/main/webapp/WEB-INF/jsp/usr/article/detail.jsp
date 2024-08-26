@@ -34,28 +34,10 @@
 			$('.article-detail__hit-count').empty().html(data.data1);
 		}, 'json')
 	}
-	
-	function ArticleDetail__doIncreaseLikeCount() {
-	    // 서버로 좋아요 요청을 보냄
-	    $.post('../article/increaseLikeRd', { articleId: params.id }, function(data) {
-	        if (data.success) {
-	            // 서버에서 새로운 좋아요 수를 반환받아 화면에 표시
-	        	id : params.id,
-				ajaxMode : 'Y'
-			}, function(data) {
-				console.log(data);
-				console.log(data.data1);
-	            $('.article-detail__like-count').text(data.data1);
-	        } else {
-	            alert("좋아요 처리에 실패했습니다.");
-	        }
-	    }, 'json');
-	}
 
 	$(function() {
 		// 		ArticleDetail__doIncreaseHitCount();
-		setTimeout(ArticleDetail__doIncreaseHitCount, 1000);
-		setTimeout(ArticleDetail__doIncreaseLikeCount, 100);
+		setTimeout(ArticleDetail__doIncreaseHitCount, 100);
 	})
 </script>
 
@@ -120,8 +102,9 @@
 	<div class="flex justify-center space-x-4">
 
 		<a href="/usr/reactionPoint/doGoodReaction?relTypeCode=article&relId=${param.id }&replaceUri=${rq.currentUri}"
-			class="btn btn-outline btn-success"> 👍(❁´◡`❁) ${article.goodReactionPoint}</a>
-		<a href="/usr/reactionPoint/doBadReaction" class="btn btn-outline btn-error">👎ಠ_ಠ ${article.badReactionPoint}</a>
+			class="btn btn-outline btn-success"> 👍(●'◡'●) ${article.goodReactionPoint}</a>
+		<a href="/usr/reactionPoint/doBadReaction?relTypeCode=article&relId=${param.id }&replaceUri=${rq.currentUri}"
+			class="btn btn-outline btn-error">👎(╬▔皿▔)╯ ${article.badReactionPoint}</a>
 
 	</div>
 

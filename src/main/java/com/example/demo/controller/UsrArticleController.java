@@ -90,11 +90,21 @@ public class UsrArticleController {
 
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
-		// -1 싫어요, 0 표현 x, 1 좋아요
-		int usersReaction = reactionPointService.usersReaction(rq.getLoginedMemberId(), "article", id);
+		// 리액션할 수 있는지 여부 검사
+		ResultData usersReactionRd = reactionPointService.usersReaction(rq.getLoginedMemberId(), "article", id);
+
+		
+		if (usersReactionRd.isSuccess()) {
+			model.addAttribute("userCanMakeReaction", usersReactionRd.isSuccess());
+		}
 
 		model.addAttribute("article", article);
-		model.addAttribute("usersReaction", usersReaction);
+		// 이미 좋아요 했는지
+		model.addAttribute("isAlreadyAddGoodRp",
+				reactionPointService.isAlreadyAddGoodRp(rq.getLoginedMemberId(), id, "article"));
+		// 이미 싫어요 했는지
+		model.addAttribute("isAlreadyAddBadRp",
+				reactionPointService.isAlreadyAddBadRp(rq.getLoginedMemberId(), id, "article"));
 
 		return "usr/article/detail";
 	}

@@ -156,20 +156,25 @@ public interface ArticleRepository {
 			""")
 	public int increaseGoodReactionPoint(int relId);
 	
-	@Insert("""
-			INSERT INTO reactionPoint
-			SET regDate = NOW(), updateDate = NOW(),
-			memberId = #{memberId},
-			relTypeCode = #{relTypeCode},
-			relId = #{relId},
-			`point` = 1
+	@Update("""
+			UPDATE article
+			SET goodReactionPoint = goodReactionPoint - 1
+			WHERE id = #{relId}
 			""")
-	public int increaseLikeCount(int memberId, String relTypeCode, int relId);
+	public int decreaseGoodReactionPoint(int relId);
 
-	@Select("""
-			SELECT `goodReactionPoint`
-			FROM article
-			WHERE id = #{id}
+	@Update("""
+			UPDATE article
+			SET badReactionPoint = badReactionPoint + 1
+			WHERE id = #{relId}
 			""")
-	public int getArticleLikeCount(int id);
+	public int increaseBadReactionPoint(int relId);
+
+	@Update("""
+			UPDATE article
+			SET badReactionPoint = badReactionPoint - 1
+			WHERE id = #{relId}
+			""")
+	public int decreaseBadReactionPoint(int relId);
+	
 }

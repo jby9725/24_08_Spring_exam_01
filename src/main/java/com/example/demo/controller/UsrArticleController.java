@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.List;
 
@@ -93,18 +94,19 @@ public class UsrArticleController {
 		// 리액션할 수 있는지 여부 검사
 		ResultData usersReactionRd = reactionPointService.usersReaction(rq.getLoginedMemberId(), "article", id);
 
-		
 		if (usersReactionRd.isSuccess()) {
 			model.addAttribute("userCanMakeReaction", usersReactionRd.isSuccess());
 		}
 
 		model.addAttribute("article", article);
 		// 이미 좋아요 했는지
-		model.addAttribute("isAlreadyAddGoodRp",
-				reactionPointService.isAlreadyAddGoodRp(rq.getLoginedMemberId(), id, "article"));
+		boolean alreadyAddGood = reactionPointService.isAlreadyAddGoodRp(rq.getLoginedMemberId(), id, "article");
+		System.err.println("AlreadyaddGood : " + alreadyAddGood);
+		model.addAttribute("isAlreadyAddGoodRp", alreadyAddGood);
 		// 이미 싫어요 했는지
-		model.addAttribute("isAlreadyAddBadRp",
-				reactionPointService.isAlreadyAddBadRp(rq.getLoginedMemberId(), id, "article"));
+		boolean alreadyAddBad = reactionPointService.isAlreadyAddBadRp(rq.getLoginedMemberId(), id, "article");
+		System.err.println("alreadyAddBad : " + alreadyAddBad);
+		model.addAttribute("isAlreadyAddBadRp", alreadyAddBad);
 
 		return "usr/article/detail";
 	}

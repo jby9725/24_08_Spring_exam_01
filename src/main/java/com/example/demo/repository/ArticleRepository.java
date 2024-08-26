@@ -89,7 +89,8 @@ public interface ArticleRepository {
 				</if>
 				</script>
 			""")
-	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String searchKeywordTypeCode, String searchKeyword);
+	public List<Article> getForPrintArticles(int boardId, int limitFrom, int limitTake, String searchKeywordTypeCode,
+			String searchKeyword);
 
 	@Select("""
 			SELECT A.* , M.nickname AS extra__writer
@@ -155,7 +156,7 @@ public interface ArticleRepository {
 			WHERE id = #{relId}
 			""")
 	public int increaseGoodReactionPoint(int relId);
-	
+
 	@Update("""
 			UPDATE article
 			SET goodReactionPoint = goodReactionPoint - 1
@@ -176,5 +177,19 @@ public interface ArticleRepository {
 			WHERE id = #{relId}
 			""")
 	public int decreaseBadReactionPoint(int relId);
-	
+
+	@Select("""
+			SELECT goodReactionPoint
+			FROM article
+			WHERE id = #{relId}
+			""")
+	public int getGoodRP(int relId);
+
+	@Select("""
+			SELECT badReactionPoint
+			FROM article
+			WHERE id = #{relId}
+			""")
+	public int getBadRP(int relId);
+
 }

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.demo.service.ArticleService;
 import com.example.demo.service.ReactionPointService;
-import com.example.demo.util.Ut;
 import com.example.demo.vo.ResultData;
 import com.example.demo.vo.Rq;
 
@@ -19,10 +19,12 @@ public class UsrReactionPointController {
 	@Autowired
 	private ReactionPointService reactionPointService;
 
+	@Autowired
+	private ArticleService articleService;
+
 	@RequestMapping("/usr/reactionPoint/doGoodReaction")
 	@ResponseBody
-	public Object doGoodReaction(String relTypeCode, int relId, String replaceUri) {
-
+	public ResultData doGoodReaction(String relTypeCode, int relId, String replaceUri) {
 
 		ResultData usersReactionRd = reactionPointService.usersReaction(rq.getLoginedMemberId(), relTypeCode, relId);
 
@@ -32,14 +34,21 @@ public class UsrReactionPointController {
 		// 리액션이 좋아요가 이미 되어있다면?
 		if (usersReaction == 1) {
 			ResultData rd = reactionPointService.deleteGoodReactionPoint(rq.getLoginedMemberId(), relTypeCode, relId);
-			return Ut.jsReplace("S-1", "좋아요 취소", replaceUri);
+
+			int goodRP = articleService.getGoodRP(relId);
+			int badRP = articleService.getBadRP(relId);
+			return ResultData.from("S-1", "좋아요 취소", "goodRP", goodRP, "badRP", badRP);
+
 			// 리액션이 싫어요가 이미 되어있다면?
 		} else if (usersReaction == -1) {
 			// 싫어요 취소
 			ResultData rd = reactionPointService.deleteBadReactionPoint(rq.getLoginedMemberId(), relTypeCode, relId);
 			// 다시 좋아요
 			rd = reactionPointService.addGoodReactionPoint(rq.getLoginedMemberId(), relTypeCode, relId);
-			return Ut.jsReplace("S-2", "싫어요 했었음", replaceUri);
+
+			int goodRP = articleService.getGoodRP(relId);
+			int badRP = articleService.getBadRP(relId);
+			return ResultData.from("S-2", "싫어요 했었음", "goodRP", goodRP, "badRP", badRP);
 		}
 
 		// 이미 되어있는 행동이 없으면 정상적으로 좋아요 실행
@@ -49,12 +58,15 @@ public class UsrReactionPointController {
 			return ResultData.from(reactionRd.getResultCode(), reactionRd.getMsg());
 		}
 
-		return Ut.jsReplace(reactionRd.getResultCode(), reactionRd.getMsg(), replaceUri);
+		int goodRP = articleService.getGoodRP(relId);
+		int badRP = articleService.getBadRP(relId);
+
+		return ResultData.from(reactionRd.getResultCode(), reactionRd.getMsg(), "goodRP", goodRP, "badRP", badRP);
 	}
 
 	@RequestMapping("/usr/reactionPoint/doBadReaction")
 	@ResponseBody
-	public Object doBadReaction(String relTypeCode, int relId, String replaceUri) {
+	public ResultData doBadReaction(String relTypeCode, int relId, String replaceUri) {
 
 		ResultData usersReactionRd = reactionPointService.usersReaction(rq.getLoginedMemberId(), relTypeCode, relId);
 
@@ -65,14 +77,22 @@ public class UsrReactionPointController {
 		if (usersReaction == -1) {
 			// 싫어요 취소
 			ResultData rd = reactionPointService.deleteBadReactionPoint(rq.getLoginedMemberId(), relTypeCode, relId);
-			return Ut.jsReplace("S-1", "싫어요 취소", replaceUri);
-		// 리액션이 좋아요가 이미 되어있다면?
+			
+			int goodRP = articleService.getGoodRP(relId);
+			int badRP = articleService.getBadRP(relId);
+			return ResultData.from("S-1", "싫어요 취소", "goodRP", goodRP, "badRP", badRP);
+			
+			// 리액션이 좋아요가 이미 되어있다면?
 		} else if (usersReaction == 1) {
 			// 좋아요 취소하고
 			ResultData rd = reactionPointService.deleteGoodReactionPoint(rq.getLoginedMemberId(), relTypeCode, relId);
 			// 싫어요 다시 하기
 			rd = reactionPointService.addBadReactionPoint(rq.getLoginedMemberId(), relTypeCode, relId);
-			return Ut.jsReplace("S-2", "좋아요 했었음", replaceUri);
+			
+			int goodRP = articleService.getGoodRP(relId);
+			int badRP = articleService.getBadRP(relId);
+			return ResultData.from("S-2", "좋아요 했었음", "goodRP", goodRP, "badRP", badRP);
+			
 		}
 
 		// 이미 되어있는 행동이 없으면 정상적으로 싫어요 실행
@@ -82,6 +102,10 @@ public class UsrReactionPointController {
 			return ResultData.from(reactionRd.getResultCode(), reactionRd.getMsg());
 		}
 
-		return Ut.jsReplace(reactionRd.getResultCode(), reactionRd.getMsg(), replaceUri);
+		int goodRP = articleService.getGoodRP(relId);
+		int badRP = articleService.getBadRP(relId);
+
+		return ResultData.from(reactionRd.getResultCode(), reactionRd.getMsg(), "goodRP", goodRP, "badRP", badRP);
+		
 	}
 }

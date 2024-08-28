@@ -10,6 +10,13 @@
 <script>
 	const params = {};
 	params.id = parseInt('${param.id}');
+	
+	params.memberId = parseInt('${loginedMemberId}')
+	
+	console.log(params);
+	console.log(params.id);
+	console.log(params.memberId);
+	
 // 	var isAlreadyAddGoodRp = ${isAlreadyAddGoodRp ? 'true' : 'false'};
 //     var isAlreadyAddBadRp = ${isAlreadyAddBadRp ? 'true' : 'false'};
 	var isAlreadyAddGoodRp = $
@@ -65,7 +72,16 @@
 		}
 	}
 function doGoodReaction(articleId) {
-		
+	if(isNaN(params.memberId) == true){
+		if(confirm('로그인 창으로 이동하시겠습니까??')){
+				console.log(window.location.href);
+				console.log(encodeURIComponent(window.location.href));
+			var currentUri = encodeURIComponent(window.location.href);
+			window.location.href = '../member/login?afterLoginUri=' + currentUri;
+		}
+		return;
+	}
+	
 		$.ajax({
 			url: '/usr/reactionPoint/doGoodReaction',
 			type: 'POST',
@@ -80,20 +96,26 @@ function doGoodReaction(articleId) {
 				if(data.resultCode.startsWith('S-')){
 					var likeButton = $('#likeButton');
 					var likeCount = $('#likeCount');
+					var likeCountC = $('.likeCount');
 					var DislikeButton = $('#DislikeButton');
 					var DislikeCount = $('#DislikeCount');
+					var DislikeCountC = $('.DislikeCount');
 					
 					if(data.resultCode == 'S-1'){
 						likeButton.toggleClass('btn-outline');
 						likeCount.text(data.data1);
+						likeCountC.text(data.data1);
 					}else if(data.resultCode == 'S-2'){
 						DislikeButton.toggleClass('btn-outline');
 						DislikeCount.text(data.data2);
+						DislikeCountC.text(data.data2);
 						likeButton.toggleClass('btn-outline');
 						likeCount.text(data.data1);
+						likeCountC.text(data.data1);
 					}else {
 						likeButton.toggleClass('btn-outline');
 						likeCount.text(data.data1);
+						likeCountC.text(data.data1);
 					}
 					
 				}else {
@@ -109,6 +131,17 @@ function doGoodReaction(articleId) {
 	}
 function doBadReaction(articleId) {
 	
+	if(isNaN(params.memberId) == true){
+		if(confirm('로그인 창으로 이동하시겠습니까?')){
+				console.log(window.location.href);
+				console.log(encodeURIComponent(window.location.href));
+			var currentUri = encodeURIComponent(window.location.href);
+			window.location.href = '../member/login?afterLoginUri=' + currentUri;
+			// 로그인 페이지에 원래 페이지의 정보를 포함시켜서 보냄
+		}
+		return;
+	}
+	
 	 $.ajax({
 			url: '/usr/reactionPoint/doBadReaction',
 			type: 'POST',
@@ -123,21 +156,28 @@ function doBadReaction(articleId) {
 				if(data.resultCode.startsWith('S-')){
 					var likeButton = $('#likeButton');
 					var likeCount = $('#likeCount');
+					var likeCountC = $('.likeCount');
 					var DislikeButton = $('#DislikeButton');
 					var DislikeCount = $('#DislikeCount');
+					var DislikeCountC = $('.DislikeCount');
 					
 					if(data.resultCode == 'S-1'){
 						DislikeButton.toggleClass('btn-outline');
 						DislikeCount.text(data.data2);
+						DislikeCountC.text(data.data2);
+						
 					}else if(data.resultCode == 'S-2'){
 						likeButton.toggleClass('btn-outline');
 						likeCount.text(data.data1);
+						likeCountC.text(data.data1);
 						DislikeButton.toggleClass('btn-outline');
 						DislikeCount.text(data.data2);
+						DislikeCountC.text(data.data2);
 		
 					}else {
 						DislikeButton.toggleClass('btn-outline');
 						DislikeCount.text(data.data2);
+						DislikeCountC.text(data.data2);
 					}
 			
 				}else {
@@ -207,11 +247,11 @@ function doBadReaction(articleId) {
 
 		<button id="likeButton" class="btn btn-outline btn-success" onclick="doGoodReaction(${param.id})">
 			👍 LIKE
-			<span id="likeCount">${article.goodReactionPoint}</span>
+			<span class="likeCount">${article.goodReactionPoint}</span>
 		</button>
 		<button id="DislikeButton" class="btn btn-outline btn-error" onclick="doBadReaction(${param.id})">
 			👎 DISLIKE
-			<span id="DislikeCount">${article.badReactionPoint}</span>
+			<span class="DislikeCount">${article.badReactionPoint}</span>
 		</button>
 
 	</div>

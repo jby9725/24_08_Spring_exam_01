@@ -6,6 +6,7 @@
 
 
 <form action="/usr/member/doLogin" method="post" class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+	<input type="hidden" name="afterLoginUri" value="${param.afterLoginUri }" />
 	<div class="mb-4">
 		<label for="loginId" class="block text-sm font-medium text-gray-700">ID</label>
 		<input type="text" id="loginId" name="loginId" required

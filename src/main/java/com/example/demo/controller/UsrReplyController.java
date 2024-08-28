@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.List;
 
@@ -13,18 +14,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.ReactionPointService;
-import com.example.demo.service.ReplyService;
 import com.example.demo.util.Ut;
 import com.example.demo.vo.Article;
 import com.example.demo.vo.Board;
-import com.example.demo.vo.Reply;
 import com.example.demo.vo.ResultData;
 import com.example.demo.vo.Rq;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-public class UsrArticleController {
+public class UsrReplyController {
 
 	@Autowired
 	private Rq rq;
@@ -38,20 +37,17 @@ public class UsrArticleController {
 	@Autowired
 	private ReactionPointService reactionPointService;
 
-	@Autowired
-	private ReplyService replyService;
-
 // 서비스 메서드 (내부에서 동작)
 	//
 
 // 액션 메서드 (외부와 통신)
-	@RequestMapping("/usr/article/write")
+	@RequestMapping("/usr/reply/write")
 	public String writeArticle(HttpServletRequest req) {
 
 		return "/usr/article/write";
 	}
 
-	@RequestMapping("/usr/article/list")
+	@RequestMapping("/usr/reply/list")
 	public String showList(HttpServletRequest req, Model model, @RequestParam(defaultValue = "1") int boardId,
 			@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "title,body") String searchKeywordTypeCode,
@@ -89,7 +85,7 @@ public class UsrArticleController {
 		return "usr/article/list";
 	}
 
-	@RequestMapping("/usr/article/detail")
+	@RequestMapping("/usr/reply/detail")
 	public String showDetail(HttpServletRequest req, Model model, int id) {
 		Rq rq = (Rq) req.getAttribute("rq");
 
@@ -102,15 +98,7 @@ public class UsrArticleController {
 			model.addAttribute("userCanMakeReaction", usersReactionRd.isSuccess());
 		}
 
-		List<Reply> replies = replyService.getForPrintReplies("article", id);
-
-		int repliesCount = replies.size();
-
 		model.addAttribute("article", article);
-
-		model.addAttribute("replies", replies);
-		model.addAttribute("repliesCount", repliesCount);
-
 		// 이미 좋아요 했는지
 		boolean alreadyAddGood = reactionPointService.isAlreadyAddGoodRp(rq.getLoginedMemberId(), id, "article");
 		System.err.println("AlreadyaddGood : " + alreadyAddGood);
@@ -123,7 +111,7 @@ public class UsrArticleController {
 		return "usr/article/detail";
 	}
 
-	@RequestMapping("/usr/article/doIncreaseHitCountRd")
+	@RequestMapping("/usr/reply/doIncreaseHitCountRd")
 	@ResponseBody
 	public ResultData doIncreaseHitCount(int id) {
 
@@ -140,7 +128,7 @@ public class UsrArticleController {
 		return rd;
 	}
 
-	@RequestMapping("/usr/article/modify")
+	@RequestMapping("/usr/reply/modify")
 	public String articleModify(HttpServletRequest req, Model model, int id) {
 
 		Rq rq = (Rq) req.getAttribute("rq");
@@ -156,7 +144,7 @@ public class UsrArticleController {
 		return "/usr/article/modify";
 	}
 
-	@RequestMapping("/usr/article/doWrite")
+	@RequestMapping("/usr/reply/doWrite")
 	@ResponseBody
 	public String doWrite(HttpServletRequest req, String title, String body, String boardId) {
 
@@ -185,7 +173,7 @@ public class UsrArticleController {
 	}
 
 	// 로그인 체크 -> 유무 체크 -> 권한 체크 -> 삭제
-	@RequestMapping("/usr/article/doDelete")
+	@RequestMapping("/usr/reply/doDelete")
 	@ResponseBody
 	public String doDelete(HttpServletRequest req, int id) {
 
@@ -215,7 +203,7 @@ public class UsrArticleController {
 	} // /usr/article/doDelete?id=1
 
 	// 로그인 체크 -> 유무 체크 -> 권한 체크 -> 수정
-	@RequestMapping("/usr/article/doModify")
+	@RequestMapping("/usr/reply/doModify")
 	@ResponseBody
 	public String doModify(HttpServletRequest req, int id, String title, String body) {
 

@@ -62,47 +62,53 @@
 </form>
 </div>
 
+<%-- ${articles} --%>
+
 <div>${articlesCount }개</div>
 
 <hr />
 
 
 <table class="table-auto w-full bg-white shadow-lg rounded-lg overflow-hidden">
-    <thead class="bg-gray-100">
-        <tr>
-            <th class="p-4 text-left">ID</th>
-            <th class="p-4 text-left">RegDate</th>
-            <th class="p-4 text-left">Title</th>
-            <th class="p-4 text-left">Nickname</th>
-            <th class="p-4 text-left">Body</th>
-            <th class="p-4 text-left">Sum</th>
-            <th class="p-4 text-left">Like</th>
-            <th class="p-4 text-left">Bad</th>
-            <th class="p-4 text-left">Hit</th>
-        </tr>
-    </thead>
-    <tbody>
-        <c:forEach var="article" items="${articles}">
-            <tr class="border-b hover:bg-gray-50">
-                <td class="p-4">${article.id}</td>
-                <td class="p-4">${article.regDate.substring(0,10)}</td>
-                <td class="p-4">
-                    <a href="detail?id=${article.id}" class="text-blue-500 hover:underline">${article.title}</a>
-                </td>
-                <td class="p-4">${article.extra__writer}</td>
-                <td class="p-4">${article.body}</td>
-                <td class="p-4">${article.extra__sumReactionPoint}</td>
-                <td class="p-4">${article.goodReactionPoint}</td>
-                <td class="p-4">${article.badReactionPoint}</td>
-                <td class="p-4">${article.hit}</td>
-            </tr>
-        </c:forEach>
-        <c:if test="${empty articles}">
-            <tr>
-                <td colspan="7" class="text-center p-4 text-gray-500">게시글이 없습니다</td>
-            </tr>
-        </c:if>
-    </tbody>
+	<thead class="bg-gray-100">
+		<tr>
+			<th class="p-4 text-left">ID</th>
+			<th class="p-4 text-left">RegDate</th>
+			<th class="p-4 text-left">Title</th>
+			<th class="p-4 text-left">Nickname</th>
+			<th class="p-4 text-left">Body</th>
+			<th class="p-4 text-left">Sum</th>
+			<th class="p-4 text-left">Like</th>
+			<th class="p-4 text-left">Bad</th>
+			<th class="p-4 text-left">Hit</th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:forEach var="article" items="${articles}">
+			<tr class="border-b hover:bg-gray-50">
+				<td class="p-4">${article.id}</td>
+				<td class="p-4">${article.regDate.substring(0,10)}</td>
+				<td class="p-4">
+					<a href="detail?id=${article.id}" class="text-blue-500 hover:underline">${article.title}
+						<c:if test="${article.extra__repliesCount > 0 }">
+							<span style="color: red;">[${article.extra__repliesCount }]</span>
+						</c:if>
+					</a>
+				</td>
+				<td class="p-4">${article.extra__writer}</td>
+				<td class="p-4">${article.body}</td>
+				<td class="p-4">${article.extra__sumReactionPoint}</td>
+				<td class="p-4">${article.goodReactionPoint}</td>
+				<td class="p-4">${article.badReactionPoint}</td>
+				<td class="p-4">${article.hit}</td>
+			</tr>
+		</c:forEach>
+		<c:if test="${empty articles}">
+			<tr>
+				<td colspan="7" class="text-center p-4 text-gray-500">게시글이 없습니다</td>
+			</tr>
+		</c:if>
+	</tbody>
 </table>
 
 <!-- 페이지 수 출력.. -->

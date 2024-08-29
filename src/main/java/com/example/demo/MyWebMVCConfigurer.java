@@ -46,24 +46,43 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 		ir.excludePathPatterns("/resource/**");
 		ir.excludePathPatterns("/error");
 
+		// 이하 로그인 필요
 		ir = registry.addInterceptor(needLoginInterceptor);
+		
+		// 게시글
 		ir.addPathPatterns("/usr/article/write");
 		ir.addPathPatterns("/usr/article/doWrite");
 		ir.addPathPatterns("/usr/article/modify");
 		ir.addPathPatterns("/usr/article/doModify");
 		ir.addPathPatterns("/usr/article/doDelete");
+		
+		// 회원
 		ir.addPathPatterns("/usr/member/doLogout");
+		ir.addPathPatterns("/usr/member/myPage");
+		ir.addPathPatterns("/usr/member/checkPw");
+		ir.addPathPatterns("/usr/member/doCheckPw");
+		ir.addPathPatterns("/usr/member/modify");
+		ir.addPathPatterns("/usr/member/doModify");
 
+		// 좋아요 싫어요
 		ir.addPathPatterns("/usr/reactionPoint/doGoodReaction");
 		ir.addPathPatterns("/usr/reactionPoint/doBadReaction");
 
+		// 댓글
 		ir.addPathPatterns("/usr/reply/doWrite");
 		
+		// 이하 로그아웃 필요
 		ir = registry.addInterceptor(needLogoutInterceptor);
+		
+		// 회원
 		ir.addPathPatterns("/usr/member/login");
 		ir.addPathPatterns("/usr/member/doLogin");
 		ir.addPathPatterns("/usr/member/join");
 		ir.addPathPatterns("/usr/member/doJoin");
+		ir.addPathPatterns("/usr/member/findLoginId");
+		ir.addPathPatterns("/usr/member/doFindLoginId");
+		ir.addPathPatterns("/usr/member/findLoginPw");
+		ir.addPathPatterns("/usr/member/doFindLoginPw");
 	}
 
 }

@@ -5460,3 +5460,22 @@ Unconditional classes:
 2024-08-29 09:03:17 [INFO ] o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
 2024-08-29 09:03:17 [DEBUG] o.s.b.f.s.DefaultListableBeanFactory - Autowiring by type from bean name 'scopedTarget.rq' via constructor to bean named 'jdk.proxy2.$Proxy80@75c45232'
 2024-08-29 09:03:17 [DEBUG] o.s.b.f.s.DefaultListableBeanFactory - Autowiring by type from bean name 'scopedTarget.rq' via constructor to bean named 'jdk.proxy2.$Proxy81@7b03b2fa'
+2024-08-29 09:08:37 [INFO ] o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2024-08-29 09:08:37 [DEBUG] o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Change set: [C:\work_jby\sts-4.24.0.RELEASE-workspace\demo\target\classes [C:\work_jby\sts-4.24.0.RELEASE-workspace\demo\target\classes\com\example\demo\controller\UsrAPITestController.class (MODIFY)]]
+2024-08-29 09:08:37 [DEBUG] o.s.boot.devtools.restart.Restarter - Restarting application
+2024-08-29 09:08:37 [DEBUG] o.s.boot.devtools.restart.Restarter - Stopping application
+2024-08-29 09:08:37 [DEBUG] o.s.b.a.ApplicationAvailabilityBean - Application availability state ReadinessState changed from ACCEPTING_TRAFFIC to REFUSING_TRAFFIC
+2024-08-29 09:08:37 [DEBUG] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@71f10a90, started on Thu Aug 29 09:02:21 KST 2024
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147483647
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Bean 'applicationTaskExecutor' completed its stop procedure
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147482623
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Bean 'webServerGracefulShutdown' completed its stop procedure
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147481599
+2024-08-29 09:08:37 [INFO ] o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Bean 'webServerStartStop' completed its stop procedure
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase -2147483647
+2024-08-29 09:08:37 [DEBUG] o.s.c.s.DefaultLifecycleProcessor - Bean 'springBootLoggingLifecycle' completed its stop procedure
+2024-08-29 09:08:37 [DEBUG] o.s.j.e.a.AnnotationMBeanExporter - Unregistering JMX-exposed beans on shutdown
+2024-08-29 09:08:37 [DEBUG] o.s.j.e.a.AnnotationMBeanExporter - Unregistering JMX-exposed beans
+2024-08-29 09:08:37 [DEBUG] o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor'
+2024-08-29 09:08:37 [DEBUG] o.s.boot.devtools.restart.Restarter - Starting application com.example.demo.DemoApplication with URLs [file:/C:/work_jby/sts-4.24.0.RELEASE-workspace/demo/target/classes/]

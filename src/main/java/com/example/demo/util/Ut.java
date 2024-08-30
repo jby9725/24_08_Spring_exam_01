@@ -1,6 +1,8 @@
 package com.example.demo.util;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.URLEncoder;
 import java.util.Map;
 
 // 유틸 담당 클래스 Ut
@@ -83,5 +85,15 @@ public class Ut {
 	public static String f(String format, Object... args) {
 
 		return String.format(format, args);
+	}
+
+	// 웹 페이지의 현재 주소(URI)를 "UTF-8"이라는 방식으로 인코딩해주는 역할
+	public static String getEncodedCurrentUri(String currentUri) {
+		try {
+			return URLEncoder.encode(currentUri, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return currentUri;
+		}
 	}
 }

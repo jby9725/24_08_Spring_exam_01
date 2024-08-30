@@ -24,7 +24,7 @@ public class Rq {
 	private int loginedMemberId;
 	@Getter
 	private Member loginedMember;
-	
+
 	private HttpServletRequest req;
 	private HttpServletResponse resp;
 
@@ -102,5 +102,16 @@ public class Rq {
 		System.out.println(currentUri);
 
 		return currentUri;
+	}
+
+	// 웹브라우저에 메시지를 표시하고, 특정 페이지로 이동
+	public void printReplace(String resultCode, String msg, String replaceUri) {
+		resp.setContentType("text/html; charset=UTF-8");
+		print(Ut.jsReplace(resultCode, msg, replaceUri));
+	}
+
+	// 현재 페이지의 주소를 인코딩해서 반환
+	public String getEncodedCurrentUri() {
+		return Ut.getEncodedCurrentUri(getCurrentUri());
 	}
 }

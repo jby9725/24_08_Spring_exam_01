@@ -22,3 +22,7 @@ li {
 header > div > ul > li {
 	margin-right: 30px;
 }
+
+.toastui-editor-contents {
+	text-align: center;
+}

@@ -2,87 +2,157 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="pageTitle" value="JOIN"></c:set>
 <%@ include file="../common/head.jspf"%>
-
 <hr />
-<!-- 이제부터 내용.. -->
-
+<!-- lodash debounce -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('form').on('submit', function(event) {
-            console.log("폼 제출 이벤트 발생"); // 디버깅용 로그
+	let validLoginId = "";
+	function JoinForm__submit(form) {
 
-            // 비밀번호와 비밀번호 확인 비교
-            var loginPw = $('#loginPw').val();
-            var loginPwConfirm = $('#loginPwConfirm').val();
+		form.loginId.value = form.loginId.value.trim();
+		if (form.loginId.value == 0) {
+			alert('아이디를 입력해주세요');
+			return;
+		}
+		if (form.loginId.value != validLoginId) {
+			alert('사용할 수 없는 아이디야');
+			form.loginId.focus();
+			return;
+		}
+		if (validLoginId == form.loginId.value) {
+			return;
+		}
+		form.loginPw.value = form.loginPw.value.trim();
+		if (form.loginPw.value == 0) {
+			alert('비밀번호를 입력해주세요');
+			return;
+		}
+		form.loginPwConfirm.value = form.loginPwConfirm.value.trim();
+		if (form.loginPwConfirm.value == 0) {
+			alert('비밀번호 확인을 입력해주세요');
+			return;
+		}
+		if (form.loginPwConfirm.value != form.loginPw.value) {
+			alert('비밀번호가 일치하지 않습니다');
+			form.loginPw.focus();
+			return;
+		}
+		form.name.value = form.name.value.trim();
+		if (form.name.value == 0) {
+			alert('이름을 입력해주세요');
+			return;
+		}
+		form.nickname.value = form.nickname.value.trim();
+		if (form.nickname.value == 0) {
+			alert('닉네임을 입력해주세요');
+			return;
+		}
+		form.email.value = form.email.value.trim();
+		if (form.email.value == 0) {
+			alert('이메일을 입력해주세요');
+			return;
+		}
+		form.cellphoneNum.value = form.cellphoneNum.value.trim();
+		if (form.cellphoneNum.value == 0) {
+			alert('전화번호를 입력해주세요');
+			return;
+		}
+		submitJoinFormDone = true;
+		form.submit();
+	}
 
-            if (loginPw !== loginPwConfirm) {
-                alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-                event.preventDefault(); // 폼 제출 막기
-                return;
-            }
-
-            // 휴대폰 번호 형식 유효성 검사 (숫자만 포함되어 있는지 확인)
-            var cellphoneNum = $('#cellphoneNum').val();
-            var phonePattern = /^[0-9]+$/;
-
-            if (!phonePattern.test(cellphoneNum)) {
-                alert('휴대폰 번호는 숫자만 입력해야 합니다.');
-                event.preventDefault(); // 폼 제출 막기
-                return;
-            }
-
-            // 추가적인 유효성 검사가 필요한 경우 여기에 추가
-            console.log("유효성 검사 통과"); // 디버깅용 로그
-        });
-    });
+	function checkLoginIdDup(el) {
+		$('.checkDup-msg').empty();
+		const form = $(el).closest('form').get(0);
+		if (form.loginId.value.length == 0) {
+			validLoginId = '';
+			return;
+		}
+		$.get('../member/getLoginIdDup', {
+			isAjax : 'Y',
+			loginId : form.loginId.value
+		}, function(data) {
+			$('.checkDup-msg').html('<div class="mt-2">' + data.msg + '</div>')
+			if (data.success) {
+				validLoginId = data.data1;
+			} else {
+				validLoginId = '';
+			}
+		}, 'json');
+	}
+// 	checkLoginIdDup();
+	const checkLoginIdDupDebounced = _.debounce(checkLoginIdDup, 300);
 </script>
+<section class="mt-24 text-xl px-4">
+	<div class="mx-auto">
+		<form action="../member/doJoin" method="POST" onsubmit="JoinForm__submit(this); return false;">
+			<table class="table" border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
+				<tbody>
+					<tr>
+						<th>아이디</th>
+						<td style="text-align: center;">
+							<input onkeyup="checkLoginIdDupDebounced(this);"
+								class="input input-bordered input-primary input-sm w-full max-w-xs" name="loginId" autocomplete="off"
+								type="text" placeholder="아이디를 입력해" />
+						</td>
 
+					</tr>
+					<tr>
+						<th></th>
+						<td style="text-align: center;">
+							<div class="checkDup-msg"></div>
+						</td>
+					</tr>
 
-<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-	<h2 class="text-2xl font-bold mb-6 text-center">회원가입</h2>
-	<form action="/usr/member/doJoin" method="POST" class="space-y-4">
-		<div>
-			<label for="loginId" class="block text-sm font-medium text-gray-700">아이디</label>
-			<input type="text" id="loginId" name="loginId" required
-				class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-		</div>
-		<div>
-			<label for="loginPw" class="block text-sm font-medium text-gray-700">비밀번호</label>
-			<input type="text" id="loginPw" name="loginPw" required
-				class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-		</div>
-		<div>
-			<label for="loginPwConfirm" class="block text-sm font-medium text-gray-700">비밀번호 확인</label>
-			<input type="text" id="loginPwConfirm" name="loginPwConfirm" required
-				class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-		</div>
-		<div>
-			<label for="name" class="block text-sm font-medium text-gray-700">이름</label>
-			<input type="text" id="name" name="name" required
-				class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-		</div>
-		<div>
-			<label for="nickname" class="block text-sm font-medium text-gray-700">닉네임</label>
-			<input type="text" id="nickname" name="nickname" required
-				class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-		</div>
-		<div>
-			<label for="cellphoneNum" class="block text-sm font-medium text-gray-700">휴대폰 번호</label>
-			<input type="text" id="cellphoneNum" name="cellphoneNum" required
-				class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-		</div>
-		<div>
-			<label for="email" class="block text-sm font-medium text-gray-700">이메일</label>
-			<input type="email" id="email" name="email" required
-				class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-		</div>
-		<div class="flex justify-between items-center mt-6">
-			<button type="submit" class="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-600">회원가입
-			</button>
-			<a href="/usr/member/login" class="btn text-sm text-yellow-500 hover:underline">로그인 페이지로</a>
-		</div>
-	</form>
-</div>
+					<tr>
+						<th>비밀번호</th>
+						<td style="text-align: center;">
+							<input class="input input-bordered input-primary input-sm w-full max-w-xs" name="loginPw" autocomplete="off"
+								type="text" placeholder="비밀번호를 입력해" />
+						</td>
+					</tr>
+					<tr>
+						<th>이름</th>
+						<td style="text-align: center;">
+							<input class="input input-bordered input-primary input-sm w-full max-w-xs" name="name" autocomplete="off"
+								type="text" placeholder="이름 입력해" />
+						</td>
+					</tr>
+					<tr>
+						<th>닉네임</th>
+						<td style="text-align: center;">
+							<input class="input input-bordered input-primary input-sm w-full max-w-xs" name="nickname" autocomplete="off"
+								type="text" placeholder="닉네임 입력해" />
+						</td>
+					</tr>
+					<tr>
+						<th>전화번호</th>
+						<td style="text-align: center;">
+							<input class="input input-bordered input-primary input-sm w-full max-w-xs" name="cellphoneNum" autocomplete="off"
+								type="text" placeholder="전화번호를 입력해" />
+						</td>
+					</tr>
+					<tr>
+						<th>이메일</th>
+						<td style="text-align: center;">
+							<input class="input input-bordered input-primary input-sm w-full max-w-xs" name="email" autocomplete="off"
+								type="text" placeholder="이메일을 입력해" />
+						</td>
+					</tr>
+					<tr>
+						<th></th>
+						<td style="text-align: center;">
+							<button class="btn btn-primary">가입</button>
+						</td>
 
-<!-- 여기까지 내용 끝.. -->
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		<div class="btns">
+			<button class="btn" type="button" onclick="history.back()">뒤로가기</button>
+		</div>
+	</div>
+</section>
+
 <%@ include file="../common/foot.jspf"%>

@@ -72,7 +72,7 @@
 			isAjax : 'Y',
 			loginId : form.loginId.value
 		}, function(data) {
-			$('.checkDup-msg').html('<div class="mt-2">' + data.msg + '</div>')
+			$('.checkDup-msg').html('<div class="">' + data.msg + '</div>')
 			if (data.success) {
 				validLoginId = data.data1;
 			} else {
@@ -80,8 +80,10 @@
 			}
 		}, 'json');
 	}
-// 	checkLoginIdDup();
-	const checkLoginIdDupDebounced = _.debounce(checkLoginIdDup, 300);
+	// 	checkLoginIdDup(); // 매번 실행
+	const checkLoginIdDupDebounced = _.debounce(checkLoginIdDup, 300); // 실행 빈도 조절
+	
+
 </script>
 <section class="mt-24 text-xl px-4">
 	<div class="mx-auto">

@@ -1,24 +1,35 @@
 package com.example.demo.vo;
 
-import lombok.Getter;
+import java.util.Map;
 
+import com.example.demo.util.Ut;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class ResultData<DT> {
 	// 성공S/실패F
-	@Getter
 	private String ResultCode;
 	// 자세한 메세지
-	@Getter
 	private String msg;
 	// 함께 처리할 데이터, 여기서는 Article, Member, List 여러 형태가 있음.
-	@Getter
 	private DT data1;
-	@Getter
 	private String data1Name;
 
-	@Getter
 	private Object data2;
-	@Getter
 	private String data2Name;
+
+	private Map<String, Object> body;
+
+	public ResultData(String ResultCode, String msg, Object... args) {
+		this.ResultCode = ResultCode;
+		this.msg = msg;
+		this.body = Ut.mapOf(args);
+	}
 
 	// data가 없는 경우
 	public static <DT> ResultData<DT> from(String ResultCode, String msg) {

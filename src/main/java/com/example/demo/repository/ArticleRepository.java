@@ -195,4 +195,9 @@ public interface ArticleRepository {
 			""")
 	public int getBadRP(int relId);
 
+	@Select("""
+			SELECT MAX(id) + 1
+			FROM article
+			""")
+	public int getCurrentArticleId();
 }

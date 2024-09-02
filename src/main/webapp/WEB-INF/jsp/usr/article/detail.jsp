@@ -265,6 +265,16 @@ function doModifyReply(replyId) {
 		<td>${article.title}</td>
 	</tr>
 	<tr>
+		<th style="text-align: center;">Attached Image</th>
+		<td style="text-align: center;">
+			<div style="text-align: center;">
+				<img class="mx-auto rounded-xl" src="${rq.getImgUri(article.id)}" onerror="${rq.profileFallbackImgOnErrorHtml}"
+					alt="" />
+			</div>
+			<div>${rq.getImgUri(article.id)}</div>
+		</td>
+	</tr>
+	<tr>
 		<th>작성일자</th>
 		<td>${article.regDate}</td>
 	</tr>
@@ -379,7 +389,7 @@ function doModifyReply(replyId) {
 	</c:if>
 
 	<c:if test="${!rq.isLogined() }">
-	<!-- 댓글 작성을 위해 <a class="btn btn-outline btn-primary btn-sm" href="../member/login">로그인</a>이 필요합니다 -->
+		<!-- 댓글 작성을 위해 <a class="btn btn-outline btn-primary btn-sm" href="../member/login">로그인</a>이 필요합니다 -->
 	댓글 작성을 위해 <a class="btn btn-sm btn-outline btn-primary" href="${rq.loginUri }">로그인</a>이 필요합니다.
 	</c:if>
 

@@ -61,6 +61,28 @@ CREATE TABLE reactionPoint (
     `point` INT(10) NOT NULL
 );
 
+# 파일 테이블 추가
+CREATE TABLE genFile (
+  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, # 번호
+  regDate DATETIME DEFAULT NULL, # 작성날짜
+  updateDate DATETIME DEFAULT NULL, # 갱신날짜
+  delDate DATETIME DEFAULT NULL, # 삭제날짜
+  delStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0, # 삭제상태(0:미삭제,1:삭제)
+  relTypeCode CHAR(50) NOT NULL, # 관련 데이터 타입(article, member)
+  relId INT(10) UNSIGNED NOT NULL, # 관련 데이터 번호
+  originFileName VARCHAR(100) NOT NULL, # 업로드 당시의 파일이름
+  fileExt CHAR(10) NOT NULL, # 확장자
+  typeCode CHAR(20) NOT NULL, # 종류코드 (common)
+  type2Code CHAR(20) NOT NULL, # 종류2코드 (attatchment)
+  fileSize INT(10) UNSIGNED NOT NULL, # 파일의 사이즈
+  fileExtTypeCode CHAR(10) NOT NULL, # 파일규격코드(img, video)
+  fileExtType2Code CHAR(10) NOT NULL, # 파일규격2코드(jpg, mp4)
+  fileNo SMALLINT(2) UNSIGNED NOT NULL, # 파일번호 (1)
+  fileDir CHAR(20) NOT NULL, # 파일이 저장되는 폴더명
+  PRIMARY KEY (id),
+  KEY relId (relTypeCode,relId,typeCode,type2Code,fileNo)
+);
+
 ## 게시판(board) 테스트 데이터 생성
 INSERT INTO board
 SET regDate = NOW(),
@@ -244,6 +266,69 @@ relTypeCode = 'article',
 relId = 2,
 `body` = '댓글 4';
 
+# reply 테이블에 좋아요 관련 컬럼 추가
+ALTER TABLE reply ADD COLUMN goodReactionPoint INT(10) UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE reply ADD COLUMN badReactionPoint INT(10) UNSIGNED NOT NULL DEFAULT 0;
+
+# reactionPoint 테스트 데이터 생성
+# 1번 회원이 1번 댓글에 싫어요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 1,
+relTypeCode = 'reply',
+relId = 1,
+`point` = -1;
+
+# 1번 회원이 2번 댓글에 좋아요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 1,
+relTypeCode = 'reply',
+relId = 2,
+`point` = 1;
+
+# 2번 회원이 1번 댓글에 싫어요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 2,
+relTypeCode = 'reply',
+relId = 1,
+`point` = -1;
+
+# 2번 회원이 2번 댓글에 싫어요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 2,
+relTypeCode = 'reply',
+relId = 2,
+`point` = -1;
+
+# 3번 회원이 1번 댓글에 좋아요
+INSERT INTO reactionPoint
+SET regDate = NOW(),
+updateDate = NOW(),
+memberId = 3,
+relTypeCode = 'reply',
+relId = 1,
+`point` = 1;
+
+# update join -> 기존 게시물의 good,bad RP 값을 RP 테이블에서 가져온 데이터로 채운다
+UPDATE reply AS R
+INNER JOIN (
+    SELECT RP.relTypeCode,RP.relId,
+    SUM(IF(RP.point > 0, RP.point, 0)) AS goodReactionPoint,
+    SUM(IF(RP.point < 0, RP.point * -1, 0)) AS badReactionPoint
+    FROM reactionPoint AS RP
+    GROUP BY RP.relTypeCode, RP.relId
+) AS RP_SUM
+ON R.id = RP_SUM.relId
+SET R.goodReactionPoint = RP_SUM.goodReactionPoint,
+R.badReactionPoint = RP_SUM.badReactionPoint;
+
 ###(INIT 끝)
 ##########################################
 
@@ -273,11 +358,14 @@ FROM reactionPoint;
 SELECT * 
 FROM `reply`;
 
+SELECT * 
+FROM `genFile`;
+
 SELECT A.* , M.nickname AS extra__writer
 FROM article AS A
 INNER JOIN `member` AS M
 ON A.memberId = M.id
-WHERE A.id = 1
+WHERE A.id = 1;
 
 # LEFT JOIN
 SELECT A.*, M.nickname AS extra__writer, RP.point
@@ -323,6 +411,22 @@ WHERE RP.relTypeCode = 'article'
 AND RP.relId = 3
 AND RP.memberId = 2;
 
+
+SELECT R.*, M.nickname AS extra__writer
+FROM reply AS R
+INNER JOIN `member` AS M
+ON R.memberId = M.id
+WHERE relTypeCode = 'article'
+AND relId = 2
+ORDER BY R.id ASC;
+
+SELECT A.*, M.nickname AS extra__writer, IFNULL(COUNT(R.id),0) AS extra__repliesCount
+FROM article AS A
+INNER JOIN `member` AS M
+ON A.memberId = M.id
+LEFT JOIN `reply` AS R
+ON A.id = R.relId
+GROUP BY A.id;
 
 -- 코멘트 포함해서 `member` 테이블의 정보 보기
 SHOW FULL COLUMNS FROM `member`;

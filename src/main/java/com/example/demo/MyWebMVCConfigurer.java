@@ -1,9 +1,11 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.example.demo.interceptor.BeforeActionInterceptor;
@@ -24,6 +26,15 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 	@Autowired
 	NeedLogoutInterceptor needLogoutInterceptor;
 
+	@Value("${custom.genFileDirPath}")
+	private String genFileDirPath;
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/gen/**").addResourceLocations("file:///" + genFileDirPath + "/")
+				.setCachePeriod(20);
+	}
+
 	// 인터셉터 등록(적용)
 	public void addInterceptors(InterceptorRegistry registry) {
 //		registry.addInterceptor(beforeActionInterceptor).addPathPatterns("/**").excludePathPatterns("/resource/**")
@@ -39,7 +50,7 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 //				.addPathPatterns("/usr/member/doJoin");
 
 		InterceptorRegistration ir;
-		
+
 		ir = registry.addInterceptor(beforeActionInterceptor);
 		ir.addPathPatterns("/**");
 		ir.addPathPatterns("/favicon.ico");
@@ -48,14 +59,14 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 
 		// 이하 로그인 필요
 		ir = registry.addInterceptor(needLoginInterceptor);
-		
+
 		// 게시글
 		ir.addPathPatterns("/usr/article/write");
 		ir.addPathPatterns("/usr/article/doWrite");
 		ir.addPathPatterns("/usr/article/modify");
 		ir.addPathPatterns("/usr/article/doModify");
 		ir.addPathPatterns("/usr/article/doDelete");
-		
+
 		// 회원
 		ir.addPathPatterns("/usr/member/doLogout");
 		ir.addPathPatterns("/usr/member/myPage");
@@ -70,10 +81,10 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 
 		// 댓글
 		ir.addPathPatterns("/usr/reply/doWrite");
-		
+
 		// 이하 로그아웃 필요
 		ir = registry.addInterceptor(needLogoutInterceptor);
-		
+
 		// 회원
 		ir.addPathPatterns("/usr/member/login");
 		ir.addPathPatterns("/usr/member/doLogin");

@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -16,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-// 유틸 담당 클래스 Ut
 public class Ut {
 
 	public static String jsReplace(String resultCode, String msg, String replaceUri) {
@@ -67,12 +68,10 @@ public class Ut {
 				""", resultMsg);
 	}
 
-	// String null, 공백 검사
 	public static boolean isEmptyOrNull(String str) {
 		return str == null || str.trim().length() == 0;
 	}
 
-	// 어떤 것이든 비어있는지 검사
 	public static boolean isEmpty(Object obj) {
 		if (obj == null) {
 			return true;
@@ -92,13 +91,11 @@ public class Ut {
 		return false;
 	}
 
-	// 화면에 보여주기 편한 형태로 바꿔서 출력
 	public static String f(String format, Object... args) {
 
 		return String.format(format, args);
 	}
 
-	// 웹 페이지의 현재 주소(URI)를 "UTF-8"이라는 방식으로 인코딩해주는 역할
 	public static String getEncodedCurrentUri(String currentUri) {
 		try {
 			return URLEncoder.encode(currentUri, "UTF-8");
@@ -282,4 +279,26 @@ public class Ut {
 	public static <T> T reqAttr(HttpServletRequest req, String attrName, T defaultValue) {
 		return (T) ifNull(req.getAttribute(attrName), defaultValue);
 	}
+
+	// sha256
+	public static String sha256(String input) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hash = md.digest(input.getBytes("UTF-8"));
+			StringBuffer hexString = new StringBuffer();
+
+			for (int i = 0; i < hash.length; i++) {
+				String hex = Integer.toHexString(0xff & hash[i]);
+				if (hex.length() == 1)
+					hexString.append('0');
+				hexString.append(hex);
+			}
+
+			return hexString.toString();
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

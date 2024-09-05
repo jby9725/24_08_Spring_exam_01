@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartRequest;
 
-import com.example.demo.interceptor.GenFileNotFoundException;
+import com.example.demo.exception.GenFileNotFoundException;
 import com.example.demo.service.GenFileService;
 import com.example.demo.vo.GenFile;
 import com.example.demo.vo.ResultData;

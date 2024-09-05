@@ -1,6 +1,7 @@
 package com.example.demo.vo;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -19,6 +20,8 @@ import lombok.Getter;
 public class Rq {
 
 	@Getter
+	boolean isAjax;
+	@Getter
 	private boolean isLogined;
 	@Getter
 	private int loginedMemberId;
@@ -30,10 +33,14 @@ public class Rq {
 
 	private HttpSession session;
 
+	private Map<String, String> paramMap;
+
 	public Rq(HttpServletRequest req, HttpServletResponse resp, MemberService memberService) {
 		this.req = req;
 		this.resp = resp;
 		this.session = req.getSession();
+
+		paramMap = Ut.getParamMap(req);
 
 		HttpSession httpSession = req.getSession();
 
@@ -44,6 +51,24 @@ public class Rq {
 		}
 
 		this.req.setAttribute("rq", this);
+
+		String requestUri = req.getRequestURI();
+
+		boolean isAjax = requestUri.endsWith("Ajax");
+
+		if (isAjax == false) {
+			if (paramMap.containsKey("ajax") && paramMap.get("ajax").equals("Y")) {
+				isAjax = true;
+			} else if (paramMap.containsKey("isAjax") && paramMap.get("isAjax").equals("Y")) {
+				isAjax = true;
+			}
+		}
+		if (isAjax == false) {
+			if (requestUri.contains("/get")) {
+				isAjax = true;
+			}
+		}
+		this.isAjax = isAjax;
 	}
 
 	public void printHistoryBack(String msg) throws IOException {
@@ -120,8 +145,12 @@ public class Rq {
 		return "../member/login?afterLoginUri=" + getAfterLoginUri();
 	}
 
-	private String getAfterLoginUri() {
+	public String getAfterLoginUri() {
 		return getEncodedCurrentUri();
+	}
+
+	public String jsReplace(String msg, String uri) {
+		return Ut.jsReplace(msg, uri);
 	}
 
 	public String getImgUri(int id) {
@@ -150,5 +179,13 @@ public class Rq {
 
 	private String getAfterFindLoginPwUri() {
 		return getEncodedCurrentUri();
+	}
+
+	public boolean isAdmin() {
+		if (isLogined == false) {
+			return false;
+		}
+
+		return loginedMember.isAdmin();
 	}
 }

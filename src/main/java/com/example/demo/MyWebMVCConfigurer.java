@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.example.demo.interceptor.BeforeActionInterceptor;
+import com.example.demo.interceptor.NeedAdminInterceptor;
 import com.example.demo.interceptor.NeedLoginInterceptor;
 import com.example.demo.interceptor.NeedLogoutInterceptor;
 
@@ -22,6 +23,10 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 	// NeedLoginInterceptor 불러오기(연결)
 	@Autowired
 	NeedLoginInterceptor needLoginInterceptor;
+
+	// NeedAdminInterceptor 불러오기
+	@Autowired
+	NeedAdminInterceptor needAdminInterceptor;
 
 	@Autowired
 	NeedLogoutInterceptor needLogoutInterceptor;
@@ -82,6 +87,15 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 		// 댓글
 		ir.addPathPatterns("/usr/reply/doWrite");
 
+		// 관리자 로그인
+		ir.addPathPatterns("/adm/**");
+		ir.addPathPatterns("/adm/member/login");
+		ir.addPathPatterns("/adm/member/doLogin");
+		ir.addPathPatterns("/adm/member/findLoginId");
+		ir.addPathPatterns("/adm/member/doFindLoginId");
+		ir.addPathPatterns("/adm/member/findLoginPw");
+		ir.addPathPatterns("/adm/member/doFindLoginPw");
+
 		// 이하 로그아웃 필요
 		ir = registry.addInterceptor(needLogoutInterceptor);
 
@@ -94,6 +108,16 @@ public class MyWebMVCConfigurer implements WebMvcConfigurer {
 		ir.addPathPatterns("/usr/member/doFindLoginId");
 		ir.addPathPatterns("/usr/member/findLoginPw");
 		ir.addPathPatterns("/usr/member/doFindLoginPw");
+
+		// 관리자
+		ir = registry.addInterceptor(needAdminInterceptor);
+		ir.addPathPatterns("/adm/**");
+		ir.addPathPatterns("/adm/member/login");
+		ir.addPathPatterns("/adm/member/doLogin");
+		ir.addPathPatterns("/adm/member/findLoginId");
+		ir.addPathPatterns("/adm/member/doFindLoginId");
+		ir.addPathPatterns("/adm/member/findLoginPw");
+		ir.addPathPatterns("/adm/member/doFindLoginPw");
 	}
 
 }

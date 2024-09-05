@@ -32,14 +32,15 @@ public class Ut {
 		}
 
 		return Ut.f("""
-					<script>
-						if(msg.length > 0){
-							alert(msg);
-						}
-						location.replace('%s');
-					</script>
-				""", msg, replaceUri);
-	}
+				<script>
+					let msg = '%s';
+					if(msg.length > 0){
+						alert(msg);
+					}
+					location.replace('%s');
+				</script>
+			""", msg, replaceUri);
+}
 
 	public static String jsReplace(String resultCode, String msg, String replaceUri) {
 

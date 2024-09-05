@@ -63,6 +63,10 @@ public class UsrMemberController {
 			return Ut.jsHistoryBack("F-4", Ut.f("비밀번호가 일치하지 않습니다!!!!!"));
 		}
 
+		if (member.isDelStatus() == true) {
+			return Ut.jsReplace("사용 정지 된 계정입니다.", "/");
+		}
+		
 		rq.login(member);
 
 		if (afterLoginUri.length() > 0) {
